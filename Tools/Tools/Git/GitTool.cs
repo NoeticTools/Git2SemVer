@@ -106,7 +106,7 @@ public class GitTool : IGitTool
             return "";
         }
 
-        var regex = new Regex(@"^## (?<branchName>\S+)\.\.\.");
+        var regex = new Regex(@"^## (?<branchName>\S+)(\.\.\.)?");
         var match = regex.Match(result.stdOutput);
 
         if (!match.Success)
