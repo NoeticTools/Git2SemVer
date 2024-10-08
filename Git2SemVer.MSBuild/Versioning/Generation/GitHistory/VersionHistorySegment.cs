@@ -59,7 +59,7 @@ internal sealed class VersionHistorySegment
     {
         _logger.LogDebug($"Branched from commit: {commit.CommitId.ShortSha}");
 
-        if (commit.CommitId == LastCommit.CommitId)
+        if (commit.CommitId.Equals(LastCommit.CommitId))
         {
             LinkToYounger(branchSegment);
             return null;

@@ -10,7 +10,7 @@
 ///         Logged errors will fail the build.
 ///     </para>
 /// </remarks>
-public interface ILogger
+public interface ILogger : IDisposable
 {
     /// <summary>
     ///     Errors that have logged by this logger.

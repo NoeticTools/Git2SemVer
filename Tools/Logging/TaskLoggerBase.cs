@@ -16,7 +16,14 @@ public abstract class TaskLoggerBase : ILogger
 
     public bool HasError { get; private set; }
 
-    public LoggingLevel Level { get; set; }
+    /// <summary>
+    /// This logger ignores the set log level as the underlying task logger sets the logging level.
+    /// </summary>
+    public LoggingLevel Level
+    {
+        get => LoggingLevel.Trace;
+        set {}
+    }
 
     public IDisposable EnterLogScope()
     {
@@ -80,38 +87,30 @@ public abstract class TaskLoggerBase : ILogger
 
     public void LogWarning(string format, params object[] args)
     {
-        if (Level >= LoggingLevel.Warning)
-        {
-            LogWarning(string.Format(format, args));
-        }
+        LogWarning(string.Format(format, args));
     }
 
     public void LogWarning(Exception exception)
     {
-        if (Level >= LoggingLevel.Warning)
-        {
-            _adapter.LogWarning(exception);
-        }
+        _adapter.LogWarning(exception);
     }
 
     public void WriteTraceLine(string format, params object[] args)
     {
-        if (Level >= LoggingLevel.Trace)
-        {
-            LogTrace(string.Format(format, args));
-        }
+        LogTrace(string.Format(format, args));
     }
 
     public void WriteTraceLine(string message)
     {
-        if (Level >= LoggingLevel.Trace)
-        {
-            _adapter.LogTrace(message);
-        }
+        _adapter.LogTrace(message);
     }
 
     private void LeaveLogScope()
     {
         _logPrefix = _logPrefix.Substring(0, _logPrefix.Length - LogScopeIndent.Length);
+    }
+
+    public void Dispose()
+    {
     }
 }

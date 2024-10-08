@@ -130,4 +130,8 @@ public class NUnitTaskLogger : ILogger
     {
         LogTrace(message);
     }
+
+    public void Dispose()
+    {
+    }
 }

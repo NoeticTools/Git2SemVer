@@ -114,4 +114,8 @@ public class ConsoleLogger : ILogger
     {
         _logPrefix = _logPrefix.Substring(0, _logPrefix.Length - LogScopeIndent.Length);
     }
+
+    public void Dispose()
+    {
+    }
 }

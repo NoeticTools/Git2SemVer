@@ -1,4 +1,5 @@
 ﻿using Microsoft.Build.Framework;
+using NoeticTools.Common.Logging;
 using NoeticTools.Common.Tools.Git;
 using NoeticTools.Git2SemVer.MSBuild.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.MSBuild.Framework.Config;
@@ -27,16 +28,6 @@ namespace NoeticTools.Git2SemVer.MSBuild.Tasks;
 /// </remarks>
 public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase
 {
-    private readonly ILogger _logger;
-
-    /// <summary>
-    ///     Default constructor used by MSBuild.
-    /// </summary>
-    public Git2SemVerGenerateVersionTask()
-    {
-        _logger = new MSBuildTaskLogger(Log);
-    }
-
     /// <summary>
     ///     Optional case-insensitive regular expression that maps branch name to build maturity such as "release" or "beta".
     /// </summary>
@@ -224,30 +215,32 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase
     /// </summary>
     public override bool Execute()
     {
+        using var logger = new CompositeLogger(new MSBuildTaskLogger(Log));
         try
         {
             var config = Git2SemVerConfiguration.Load();
             var inputs = GetGeneratorInputs();
-            var host = new BuildHostFactory(config, _logger).Create(inputs.HostType,
+            var host = new BuildHostFactory(config, logger).Create(inputs.HostType,
                                                                     inputs.BuildNumber,
                                                                     inputs.BuildContext,
                                                                     inputs.BuildIdFormat);
-            var gitTool = new GitTool(_logger)
+            var gitTool = new GitTool(logger)
             {
                 WorkingDirectory = inputs.WorkingDirectory
             };
             var commitsRepo = new CommitsRepository(gitTool);
-            var gitPathsFinder = new PathsFromLastReleasesFinder(commitsRepo, gitTool, _logger);
+            var gitPathsFinder = new PathsFromLastReleasesFinder(commitsRepo, gitTool, logger);
 
-            var defaultBuilderFactory = new DefaultVersionBuilderFactory(_logger);
+            var defaultBuilderFactory = new DefaultVersionBuilderFactory(logger);
             var scriptBuilder = new ScriptVersionBuilder();
             var versionGenerator = new VersionGenerator(inputs, host, new GeneratedOutputsFile(), gitTool, gitPathsFinder, defaultBuilderFactory,
-                                                        scriptBuilder, _logger);
+                                                        scriptBuilder, logger);
             SetOutputs(versionGenerator.Run());
             return !Log.HasLoggedErrors;
         }
         catch (Exception exception)
         {
+            logger.LogError(exception);
             Log.LogErrorFromException(exception);
             return false;
         }
