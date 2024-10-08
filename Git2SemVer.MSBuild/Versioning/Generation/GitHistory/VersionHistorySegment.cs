@@ -50,7 +50,7 @@ internal sealed class VersionHistorySegment
     {
         if (_commits.Count > 0 && FirstCommit.Parents.All(x => x.Id != commit.CommitId.Id))
         {
-            throw new InvalidOperationException($"Cannot append {commit.CommitId.ShortSha} as it is not connected to segment's first commit.");
+            throw new InvalidOperationException($"Cannot append {commit.CommitId.ShortSha} as it is not connected to segment's first (oldest) commit.");
         }
 
         _bumps = null;
@@ -60,10 +60,11 @@ internal sealed class VersionHistorySegment
 
     public VersionHistorySegment? BranchedFrom(VersionHistorySegment branchSegment, Commit commit)
     {
-        _logger.LogDebug($"Branched from commit: {commit.CommitId.ShortSha}");
+        _logger.LogDebug("Commit {0} in segment {1} branches to segment {2}.", commit.CommitId.ShortSha, Id, branchSegment.Id);
 
         if (commit.CommitId.Equals(LastCommit.CommitId))
         {
+            _logger.LogTrace("Commit {0} is last (youngest) commit in segment {1}. Link segments.", commit.CommitId.ShortSha, Id);
             LinkToYounger(branchSegment);
             return null;
         }
@@ -138,6 +139,8 @@ internal sealed class VersionHistorySegment
         {
             throw new Git2SemVerInvalidOperationException("Cannot split a segment that does not contain the commit.");
         }
+
+        _logger.LogTrace("Splitting segment {0} at commit {1}", Id, commit.CommitId.ShortSha);
 
         var keepCommits = _commits.Take(index).ToList();
         var newSegmentCommits = _commits.Skip(index).Take(_commits.Count - index).ToList();

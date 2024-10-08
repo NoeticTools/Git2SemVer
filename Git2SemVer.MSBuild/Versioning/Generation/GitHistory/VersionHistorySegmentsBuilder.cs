@@ -90,6 +90,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
         if (_commitsCache.ContainsKey(commit.CommitId))
         {
+            _logger.LogTrace("Commit {0} exists in another segment.");
             OnBranchCommit(commit);
             return SegmentWalkResult.FoundStart;
         }
