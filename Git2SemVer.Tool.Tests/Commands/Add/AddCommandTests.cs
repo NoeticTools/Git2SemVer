@@ -50,6 +50,12 @@ internal class AddCommandTests
                                     _logger);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _logger.Dispose();
+    }
+
     [Test]
     public void Test()
     {

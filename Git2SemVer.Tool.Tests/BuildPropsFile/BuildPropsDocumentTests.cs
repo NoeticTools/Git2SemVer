@@ -48,6 +48,12 @@ internal class BuildPropsDocumentTests
         _logger = new NUnitTaskLogger(false);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _logger.Dispose();
+    }
+
     private ProjectDocument Setup(string testPropsFileName)
     {
         var content = new EmbeddedResources<BuildPropsDocumentTests>().GetResourceFileContent(testPropsFileName);

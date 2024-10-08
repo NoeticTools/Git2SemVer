@@ -39,6 +39,12 @@ internal class PathsFromLastReleasesFinderTests
                                            .ToReadOnlyList());
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _logger.Dispose();
+    }
+
     [TestCaseSource(typeof(GitTestRepositories))]
     public void FindPathsToHead(string name, GitTestRepository scenario)
     {

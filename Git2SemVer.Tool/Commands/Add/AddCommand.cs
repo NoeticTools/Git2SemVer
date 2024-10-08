@@ -112,7 +112,7 @@ internal sealed class AddCommand : ISetupCommand
         var sharedDirectory = parentDirectory.WithSubDirectory(Git2SemverConstants.ShareFolderName);
         if (sharedDirectory.Exists)
         {
-            _logger.WriteTraceLine("`{0}` already existed. Overwriting files in directory.", sharedDirectory.Name);
+            _logger.LogTrace("`{0}` already existed. Overwriting files in directory.", sharedDirectory.Name);
         }
         sharedDirectory.Create();
 

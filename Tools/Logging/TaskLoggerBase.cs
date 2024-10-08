@@ -31,6 +31,11 @@ public abstract class TaskLoggerBase : ILogger
         return new UsingScope(LeaveLogScope);
     }
 
+    public void Log(LoggingLevel level, string message)
+    {
+        throw new NotImplementedException();
+    }
+
     public void LogDebug(string message)
     {
         _adapter.LogDebug(_logPrefix + message);
@@ -93,16 +98,6 @@ public abstract class TaskLoggerBase : ILogger
     public void LogWarning(Exception exception)
     {
         _adapter.LogWarning(exception);
-    }
-
-    public void WriteTraceLine(string format, params object[] args)
-    {
-        LogTrace(string.Format(format, args));
-    }
-
-    public void WriteTraceLine(string message)
-    {
-        _adapter.LogTrace(message);
     }
 
     private void LeaveLogScope()

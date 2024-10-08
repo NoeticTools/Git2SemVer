@@ -30,6 +30,8 @@ public interface ILogger : IDisposable
     /// <returns></returns>
     IDisposable EnterLogScope();
 
+    void Log(LoggingLevel level, string message);
+
     /// <summary>
     ///     Log a message with [normal
     ///     importance](https://learn.microsoft.com/en-us/dotnet/api/microsoft.build.framework.messageimportance?view=msbuild-17-netcore).
@@ -107,8 +109,4 @@ public interface ILogger : IDisposable
     ///     Log an exception as a warning.
     /// </summary>
     void LogWarning(Exception exception);
-
-    void WriteTraceLine(string format, params object[] args);
-
-    void WriteTraceLine(string message);
 }

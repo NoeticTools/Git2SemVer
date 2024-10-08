@@ -32,6 +32,14 @@ public sealed class CompositeLogger : ILogger
         return new UsingScope(() => LeaveLogScope(scopes));
     }
 
+    public void Log(LoggingLevel level, string message)
+    {
+        if (Level >= level)
+        {
+            _loggers.ForEach(logger => logger.Log(level, message));
+        }
+    }
+
     private static void LeaveLogScope(List<IDisposable> scopes)
     {
         scopes.ForEach(leaveScope => leaveScope.Dispose());
@@ -145,25 +153,6 @@ public sealed class CompositeLogger : ILogger
         if (Level >= LoggingLevel.Warning)
         {
             _loggers.ForEach(logger => logger.LogWarning(exception));
-        }
-    }
-
-    public void WriteTraceLine(string format, params object[] args)
-    {
-        if (Level < LoggingLevel.Trace)
-        {
-            return;
-        }
-
-        var line = string.Format(format, args);
-        _loggers.ForEach(logger => logger.WriteTraceLine(line));
-    }
-
-    public void WriteTraceLine(string message)
-    {
-        if (Level >= LoggingLevel.Trace)
-        {
-            _loggers.ForEach(logger => logger.WriteTraceLine(message));
         }
     }
 

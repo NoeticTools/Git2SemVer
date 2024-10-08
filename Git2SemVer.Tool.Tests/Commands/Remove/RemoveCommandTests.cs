@@ -40,5 +40,11 @@ internal class RemoveCommandTests
                                     _contentEditor.Object,
                                     _logger);
     }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _logger.Dispose();
+    }
 }
 

@@ -5,17 +5,23 @@ using Spectre.Console;
 namespace NoeticTools.Common.Logging;
 
 [RegisterTransient]
-public class ConsoleLogger : ILogger
+public class FileLogger : ILogger
 {
     private const string LogScopeIndent = "  ";
     private readonly List<string> _errorMessages = [];
     private string _logPrefix = "";
+    private readonly StreamWriter _stream;
+
+    public FileLogger(string filePath)
+    {
+        _stream = new StreamWriter(filePath, false);
+    }
 
     public string Errors => string.Join("\n", _errorMessages);
 
     public bool HasError { get; private set; }
 
-    public LoggingLevel Level { get; set; } = LoggingLevel.Info;
+    public LoggingLevel Level { get; set; } = LoggingLevel.Trace;
 
     public IDisposable EnterLogScope()
     {
@@ -25,44 +31,43 @@ public class ConsoleLogger : ILogger
 
     public void Log(LoggingLevel level, string message)
     {
-        if (Level <= level)
+        if (Level < level)
         {
-            var lookup = new Dictionary<LoggingLevel, Action<string>>
-            {
-                { LoggingLevel.Trace, LogTrace },
-                { LoggingLevel.Debug, LogDebug },
-                { LoggingLevel.Info, LogInfo },
-                { LoggingLevel.Warning, LogWarning },
-                { LoggingLevel.Error, LogError },
-            };
-
-            lookup[level](message);
+            return;
         }
+
+        var levelPrefix = new Dictionary<LoggingLevel, string>
+        {
+            { LoggingLevel.Trace, "TRACE|" },
+            { LoggingLevel.Debug, "DEBUG|" },
+            { LoggingLevel.Info, "INFO|" },
+            { LoggingLevel.Warning, "WARN|" },
+            { LoggingLevel.Error, "ERROR|" },
+        };
+
+        _stream.WriteLine(levelPrefix[level] + _logPrefix + message);
     }
 
     public void LogDebug(string message)
     {
-        if (Level <= LoggingLevel.Debug)
-        {
-            Console.Out.WriteLine(_logPrefix + message);
-        }
+        Log(LoggingLevel.Debug, message);
     }
 
     public void LogDebug(string message, params object[] messageArgs)
     {
-        LogDebug(string.Format(message, messageArgs));
+        Log(LoggingLevel.Debug, string.Format(message, messageArgs));
     }
 
     public void LogError(string message)
     {
         HasError = true;
         _errorMessages.Add(message);
-        AnsiConsole.MarkupLine("[red]" + message + "[/]");
+        Log(LoggingLevel.Error, message);
     }
 
     public void LogError(string message, params object[] messageArgs)
     {
-        LogError(_logPrefix + string.Format(message, messageArgs));
+        LogError(string.Format(message, messageArgs));
     }
 
     public void LogError(Exception exception)
@@ -74,7 +79,7 @@ public class ConsoleLogger : ILogger
 
     public void LogInfo(string message)
     {
-        Console.Out.WriteLine(_logPrefix + message);
+        Log(LoggingLevel.Info, message);
     }
 
     public void LogInfo(string message, params object[] messageArgs)
@@ -84,10 +89,7 @@ public class ConsoleLogger : ILogger
 
     public void LogTrace(string message)
     {
-        if (Level >= LoggingLevel.Trace)
-        {
-            Console.Out.WriteLine(_logPrefix + message);
-        }
+        Log(LoggingLevel.Trace, message);
     }
 
     public void LogTrace(string message, params object[] messageArgs)
@@ -100,11 +102,7 @@ public class ConsoleLogger : ILogger
 
     public void LogWarning(string message)
     {
-        if (Level >= LoggingLevel.Warning)
-        {
-            Console.Out.WriteLine(_logPrefix + message);
-            AnsiConsole.MarkupLine("[fuchsia]" + message + "[/]");
-        }
+        Log(LoggingLevel.Warning, message);
     }
 
     public void LogWarning(string format, params object[] args)
@@ -124,5 +122,7 @@ public class ConsoleLogger : ILogger
 
     public void Dispose()
     {
+        _stream.Flush();
+        _stream.Close();
     }
 }
