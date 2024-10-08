@@ -1,4 +1,5 @@
-﻿using NoeticTools.Common.Exceptions;
+﻿using Microsoft.Build.Utilities;
+using NoeticTools.Common.Exceptions;
 using NoeticTools.Common.Logging;
 using NoeticTools.Common.Tools.Git;
 using Semver;
@@ -26,6 +27,7 @@ internal sealed class VersionHistorySegment
     {
         _logger = logger;
         Id = _nextId++;
+        logger.LogTrace("Created git path segment {0}", Id);
     }
 
     public ApiChanges Bumps => GetVersionBumps();
@@ -53,6 +55,7 @@ internal sealed class VersionHistorySegment
 
         _bumps = null;
         _commits.Add(commit);
+        _logger.LogTrace("Appended commit {0} to segment {1}.", commit.CommitId.ShortSha, Id);
     }
 
     public VersionHistorySegment? BranchedFrom(VersionHistorySegment branchSegment, Commit commit)
@@ -79,7 +82,7 @@ internal sealed class VersionHistorySegment
     /// <summary>
     ///     Create a (younger) segment that this segment links to.
     /// </summary>
-    public VersionHistorySegment CreateToSegment()
+    public VersionHistorySegment CreateMergedSegment()
     {
         var fromBranch = new VersionHistorySegment(_logger);
         fromBranch.LinkToYounger(this);
@@ -99,7 +102,7 @@ internal sealed class VersionHistorySegment
         var commitsCount = $"({_commits.Count})";
 
         return
-            $"Segment {Id}: {LastCommit!.CommitId.ShortSha} -> {FirstCommit!.CommitId.ShortSha}  {commitsCount,5}  {Bumps.ToString() ?? "???"}  {toSegments,-16}  {fromSegments,-16}";
+            $"Segment {Id}: {LastCommit.CommitId.ShortSha} -> {FirstCommit.CommitId.ShortSha}  {commitsCount,5}  {Bumps.ToString() ?? "???"}  {toSegments,-16}  {fromSegments,-16}";
     }
 
     private ApiChanges GetVersionBumps()

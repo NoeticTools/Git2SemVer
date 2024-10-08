@@ -54,7 +54,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
     private void BuildSegmentsTo(Commit commit)
     {
-        _logger.LogTrace($"Finding segments to: {commit.CommitId.ShortSha}");
+        _logger.LogTrace("Finding segments to: {0}", commit.CommitId.ShortSha);
         using (_logger.EnterLogScope())
         {
             while (OnCommit(commit) == SegmentWalkResult.Continue)
@@ -66,7 +66,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
     private void OnBranchCommit(Commit commit)
     {
-        _logger.LogDebug($"Branch commit: {commit.CommitId.ShortSha}");
+        _logger.LogDebug("Branch commit: {0}", commit.CommitId.ShortSha);
         using (_logger.EnterLogScope())
         {
             var intersectingSegment = _commitsCache[commit.CommitId];
@@ -99,6 +99,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
         if (commit.ReleasedVersion != null)
         {
+            _logger.LogTrace("Commit {0} has release tag", commit.CommitId.ShortSha);
             _segment.TaggedReleasedVersion = commit.ReleasedVersion;
             return SegmentWalkResult.FoundStart;
         }
@@ -107,16 +108,17 @@ internal sealed class VersionHistorySegmentsBuilder
 
         if (!parents.Any())
         {
+            // First commit in repository
             return SegmentWalkResult.FoundStart;
         }
 
-        if (parents.Count != 2)
+        if (parents.Count == 2)
         {
-            return SegmentWalkResult.Continue;
+            OnMergeCommit(commit);
+            return SegmentWalkResult.FoundStart;
         }
 
-        OnMergeCommit(commit);
-        return SegmentWalkResult.FoundStart;
+        return SegmentWalkResult.Continue;
     }
 
     /*
@@ -133,7 +135,7 @@ internal sealed class VersionHistorySegmentsBuilder
        1>            Merged from commit: e228a8b <<<< A
        1>            Finding segments to: e228a8b
        1>              Commit: e228a8b
-       1>              Merge commit: e228a8b <<<<<< SUSPECT this merge immediately after A mean we get a segment without commits
+       1>              Merge commit: e228a8b <<<<<< SUSPECT this merge immediately after A
        1>                Merged from commit: 8576c20
        1>                Finding segments to: 8576c20
        1>                  Commit: 8576c20
@@ -148,6 +150,7 @@ internal sealed class VersionHistorySegmentsBuilder
        1>        Merged from commit: daf530d
        
      */
+
     private void OnMergeCommit(Commit commit)
     {
         _logger.LogDebug($"Merge commit: {commit.CommitId.ShortSha}");
@@ -156,8 +159,11 @@ internal sealed class VersionHistorySegmentsBuilder
             foreach (var parent in commit.Parents.ToList())
             {
                 _logger.LogDebug($"Merged from commit: {parent.ShortSha}");
-                var newSegmentVisitor = new VersionHistorySegmentsBuilder(_segment.CreateToSegment(), this);
-                newSegmentVisitor.BuildSegmentsTo(_commits.Get(parent));
+                using (_logger.EnterLogScope())
+                {
+                    var newSegmentVisitor = new VersionHistorySegmentsBuilder(_segment.CreateMergedSegment(), this);
+                    newSegmentVisitor.BuildSegmentsTo(_commits.Get(parent));
+                }
             }
         }
     }
