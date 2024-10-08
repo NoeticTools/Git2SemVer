@@ -1,17 +1,24 @@
-﻿namespace NoeticTools.Git2SemVer.MSBuild.Versioning.Generation.GitHistory;
+﻿using NoeticTools.Common.Logging;
+
+
+namespace NoeticTools.Git2SemVer.MSBuild.Versioning.Generation.GitHistory;
 
 #pragma warning disable CS1591
 internal sealed class VersionHistoryPathsBuilder
 {
     private readonly IReadOnlyList<VersionHistorySegment> _segments;
+    private readonly ILogger _logger;
 
-    public VersionHistoryPathsBuilder(IReadOnlyList<VersionHistorySegment> segments)
+    public VersionHistoryPathsBuilder(IReadOnlyList<VersionHistorySegment> segments, ILogger logger)
     {
         _segments = segments;
+        _logger = logger;
     }
 
     public HistoryPaths Build()
     {
+        _logger.LogDebug($"Building git paths to last releases from segments.");
+
         var paths = FindPaths();
         return new HistoryPaths(paths, _segments);
     }
@@ -30,6 +37,15 @@ internal sealed class VersionHistoryPathsBuilder
         foreach (var path in paths)
         {
             path.Id = nextPathId++;
+        }
+
+        _logger.LogDebug($"Found {paths.Count} paths.");
+        using (_logger.EnterLogScope())
+        {
+            foreach (var path in paths)
+            {
+                _logger.LogDebug(path.ToString());
+            }
         }
 
         return paths;

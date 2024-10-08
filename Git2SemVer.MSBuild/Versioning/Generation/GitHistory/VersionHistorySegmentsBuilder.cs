@@ -35,6 +35,7 @@ internal sealed class VersionHistorySegmentsBuilder
     {
         var stopwatch = Stopwatch.StartNew();
 
+        _logger.LogDebug("Finding git path segments to last releases.");
         BuildSegmentsTo(commit);
 
         stopwatch.Stop();
