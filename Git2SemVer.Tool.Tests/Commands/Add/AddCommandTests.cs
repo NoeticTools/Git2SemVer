@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Moq;
 using NoeticTools.Common;
+using NoeticTools.Common.Logging;
 using NoeticTools.Common.Tools.DotnetCli;
 using NoeticTools.Git2SemVer.Tool.Framework;
 using NoeticTools.Git2SemVer.Tool.MSBuild.Projects;
@@ -31,7 +32,7 @@ internal class AddCommandTests
     [SetUp]
     public void SetUp()
     {
-        _logger = new NUnitTaskLogger();
+        _logger = new NUnitTaskLogger() { Level = LoggingLevel.Trace };
         _solutionFinder = new Mock<ISolutionFinder>();
         _userOptionsPrompt = new Mock<IUserOptionsPrompt>();
         _dotNetTool = new Mock<IDotNetTool>();

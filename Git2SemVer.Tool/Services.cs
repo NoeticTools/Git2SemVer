@@ -14,7 +14,7 @@ internal sealed class Services
     {
         var services = new ServiceCollection();
 
-        var logger = new NullTaskLogger(); // todo - add logger
+        var logger = new FileLogger(GetLogFilePath());
         services.AddSingleton<ILogger>(logger);
 
         services.AddNoeticToolsGit2SemVerTool();
@@ -22,4 +22,16 @@ internal sealed class Services
 
         return services.BuildServiceProvider();
     }
+
+    private static string GetLogFilePath()
+    {
+        var folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Git2SemVer");
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+
+        return Path.Combine(folderPath, "Git2SemVer.Tool.log");
+    }
+
 }

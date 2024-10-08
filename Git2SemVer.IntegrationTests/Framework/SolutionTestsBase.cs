@@ -71,7 +71,6 @@ public abstract class SolutionTestsBase : ScriptingTestsBase
         {
             WorkingDirectory = TestSolutionDirectory
         };
-
         return process.Run("dotnet", $"{Git2SemVerToolPath} {commandLineArguments}");
     }
 }

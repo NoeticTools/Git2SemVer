@@ -25,8 +25,7 @@ internal class UncontrolledHost : BuildHostBase, IDetectableBuildHost
             throw new Git2SemVerConfigurationException("UncontrolledHost: Host.BuildContext is required.");
         }
 
-        var buildId = DefaultBuildNumberFunc();
-        logger.LogInfo($"Uncontrolled host. Build ID = {BuildId} | {buildId[0]},{buildId[1]}");//>>>
+        logger.LogDebug($"Uncontrolled host. Build ID = {BuildId[0]}.{BuildId[1]}");
     }
 
     public HostTypeIds HostTypeId => HostTypeIds.Uncontrolled;

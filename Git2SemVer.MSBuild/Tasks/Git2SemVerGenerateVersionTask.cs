@@ -215,9 +215,12 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase
     /// </summary>
     public override bool Execute()
     {
-        using var logger = new CompositeLogger(new MSBuildTaskLogger(Log));
+        var logFilePath = Path.Combine(Input_Env_IntermediateOutputDirectory, "Git2SemVer.MSBuild.log");
+        using var logger = new CompositeLogger(new MSBuildTaskLogger(Log), new FileLogger(logFilePath));
         try
         {
+            logger.LogDebug("Executing Git2SemVer.MSBuild task to generate version.");
+
             var config = Git2SemVerConfiguration.Load();
             var inputs = GetGeneratorInputs();
             var host = new BuildHostFactory(config, logger).Create(inputs.HostType,

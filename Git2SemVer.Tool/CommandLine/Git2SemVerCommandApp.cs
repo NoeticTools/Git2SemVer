@@ -1,4 +1,5 @@
-﻿using Spectre.Console.Cli;
+﻿using NoeticTools.Common.Logging;
+using Spectre.Console.Cli;
 
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine;
@@ -23,6 +24,11 @@ internal class Git2SemVerCommandApp
                   .WithData(servicesProvider);
         });
 
-        return app.Run(args);
+        var returnCode = app.Run(args);
+
+        var logger = (ILogger)servicesProvider.GetService(typeof(ILogger))!;
+        logger.Dispose();
+
+        return returnCode;
     }
 }

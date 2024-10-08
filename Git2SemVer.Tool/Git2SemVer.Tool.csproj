@@ -30,6 +30,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Logging\**" />
+    <EmbeddedResource Remove="Logging\**" />
+    <None Remove="Logging\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>NoeticTools.Git2SemVer.Tool.Tests</_Parameter1>
     </AssemblyAttribute>
@@ -70,10 +76,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Git2Semver.Common\Git2Semver.Common.csproj" />
     <ProjectReference Include="..\Tools\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Logging\" />
   </ItemGroup>
 
   <ItemGroup>

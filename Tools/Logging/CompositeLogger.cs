@@ -9,6 +9,7 @@ public sealed class CompositeLogger : ILogger
     public CompositeLogger(params ILogger[] loggers)
     {
         _loggers = [..loggers];
+        Level = LoggingLevel.Info;
     }
 
     public string Errors => string.Join("\n", _errorMessages);

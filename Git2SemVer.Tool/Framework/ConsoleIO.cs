@@ -14,10 +14,6 @@ public class ConsoleIO : IConsoleIO
 
     private readonly ILogger _logger;
 
-    public ConsoleIO() : this(new NullTaskLogger())
-    {
-    }
-
     public ConsoleIO(ILogger logger)
     {
         _logger = logger;
