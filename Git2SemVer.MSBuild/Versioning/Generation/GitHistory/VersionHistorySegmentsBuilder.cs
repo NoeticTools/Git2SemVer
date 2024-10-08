@@ -40,6 +40,14 @@ internal sealed class VersionHistorySegmentsBuilder
         stopwatch.Stop();
         _logger.LogDebug($"Found {_segments.Count} segments ({stopwatch.ElapsedMilliseconds}ms)");
 
+        using (_logger.EnterLogScope())
+        {
+            foreach (var segment in _segments)
+            {
+                _logger.LogDebug(segment.ToString());
+            }
+        }
+
         return _segments.Values.ToList();
     }
 
