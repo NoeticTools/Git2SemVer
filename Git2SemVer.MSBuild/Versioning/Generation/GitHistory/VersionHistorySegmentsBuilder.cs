@@ -45,7 +45,7 @@ internal sealed class VersionHistorySegmentsBuilder
         {
             foreach (var segment in _segments)
             {
-                _logger.LogDebug(segment.ToString());
+                _logger.LogDebug(segment.Value.ToString());
             }
         }
 
@@ -54,7 +54,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
     private void BuildSegmentsTo(Commit commit)
     {
-        _logger.LogTrace("Finding segments to: {0}", commit.CommitId.ShortSha);
+        _logger.LogTrace("Finding segments to: {0}", commit.CommitId.ObfuscatedSha);
         using (_logger.EnterLogScope())
         {
             while (OnCommit(commit) == SegmentWalkResult.Continue)
@@ -66,7 +66,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
     private void OnBranchCommit(Commit commit)
     {
-        _logger.LogDebug("Branch commit: {0}", commit.CommitId.ShortSha);
+        _logger.LogDebug("Branch commit: {0}", commit.CommitId.ObfuscatedSha);
         using (_logger.EnterLogScope())
         {
             var intersectingSegment = _commitsCache[commit.CommitId];
@@ -86,7 +86,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
     private SegmentWalkResult OnCommit(Commit commit)
     {
-        _logger.LogTrace($"Commit: {commit.CommitId.ShortSha}  {commit.ReleasedVersion?.ToString() ?? ""}");
+        _logger.LogTrace($"Commit: {commit.CommitId.ObfuscatedSha}  {commit.ReleasedVersion?.ToString() ?? ""}");
 
         if (_commitsCache.ContainsKey(commit.CommitId))
         {
@@ -100,7 +100,7 @@ internal sealed class VersionHistorySegmentsBuilder
 
         if (commit.ReleasedVersion != null)
         {
-            _logger.LogTrace("Commit {0} has release tag", commit.CommitId.ShortSha);
+            _logger.LogTrace("Commit {0} has release tag", commit.CommitId.ObfuscatedSha);
             _segment.TaggedReleasedVersion = commit.ReleasedVersion;
             return SegmentWalkResult.FoundStart;
         }
@@ -136,7 +136,7 @@ internal sealed class VersionHistorySegmentsBuilder
        1>            Merged from commit: e228a8b <<<< A
        1>            Finding segments to: e228a8b
        1>              Commit: e228a8b
-       1>              Merge commit: e228a8b <<<<<< SUSPECT this merge immediately after A
+       1>              Merge commit: e228a8b <<<<<< SUSPECT this merge immediately after A -- PROBLEM IS LATER
        1>                Merged from commit: 8576c20
        1>                Finding segments to: 8576c20
        1>                  Commit: 8576c20
@@ -154,12 +154,12 @@ internal sealed class VersionHistorySegmentsBuilder
 
     private void OnMergeCommit(Commit commit)
     {
-        _logger.LogDebug($"Merge commit: {commit.CommitId.ShortSha}");
+        _logger.LogDebug($"Merge commit: {commit.CommitId.ObfuscatedSha}");
         using (_logger.EnterLogScope())
         {
             foreach (var parent in commit.Parents.ToList())
             {
-                _logger.LogDebug($"Merged from commit: {parent.ShortSha}");
+                _logger.LogDebug($"Merged from commit: {parent.ObfuscatedSha}");
                 using (_logger.EnterLogScope())
                 {
                     var newSegmentVisitor = new VersionHistorySegmentsBuilder(_segment.CreateMergedSegment(), this);

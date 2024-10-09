@@ -59,7 +59,7 @@ public sealed class CompositeLogger : ILogger
         if (Level >= LoggingLevel.Debug)
         {
             var formattedMessage = string.Format(message, messageArgs);
-            LogError(formattedMessage);
+            LogDebug(formattedMessage);
         }
     }
 
@@ -161,5 +161,10 @@ public sealed class CompositeLogger : ILogger
     {
         _loggers.ForEach(logger => logger.Dispose());
         _loggers.Clear();
+    }
+
+    public void Add(ILogger logger)
+    {
+        _loggers.Add(logger);
     }
 }

@@ -50,17 +50,17 @@ internal sealed class VersionHistorySegment
     {
         if (_commits.Count > 0 && FirstCommit.Parents.All(x => x.Id != commit.CommitId.Id))
         {
-            throw new InvalidOperationException($"Cannot append {commit.CommitId.ShortSha} as it is not connected to segment's first (oldest) commit.");
+            throw new InvalidOperationException($"Cannot append {commit.CommitId.ObfuscatedSha} as it is not connected to segment's first (oldest) commit.");
         }
 
         _bumps = null;
         _commits.Add(commit);
-        _logger.LogTrace("Appended commit {0} to segment {1}.", commit.CommitId.ShortSha, Id);
+        _logger.LogTrace("Appended commit {0} to segment {1}.", commit.CommitId.ObfuscatedSha, Id);
     }
 
     public VersionHistorySegment? BranchedFrom(VersionHistorySegment branchSegment, Commit commit)
     {
-        _logger.LogDebug("Commit {0} in segment {1} branches to segment {2}.", commit.CommitId.ShortSha, Id, branchSegment.Id);
+        _logger.LogDebug("Commit {0} in segment {1} branches to segment {2}.", commit.CommitId.ObfuscatedSha, Id, branchSegment.Id);
 
         if (commit.CommitId.Equals(LastCommit.CommitId))
         {
@@ -103,7 +103,7 @@ internal sealed class VersionHistorySegment
         var commitsCount = $"({_commits.Count})";
 
         return
-            $"Segment {Id}: {LastCommit.CommitId.ShortSha} -> {FirstCommit.CommitId.ShortSha}  {commitsCount,5}  {Bumps.ToString() ?? "???"}  {toSegments,-16}  {fromSegments,-16}";
+            $"Segment {Id,3}: {LastCommit.CommitId.ObfuscatedSha} -> {FirstCommit.CommitId.ObfuscatedSha}  {commitsCount,5}  {Bumps.ToString() ?? "???"}  {toSegments,-16}  {fromSegments,-16}";
     }
 
     private ApiChanges GetVersionBumps()
@@ -140,7 +140,7 @@ internal sealed class VersionHistorySegment
             throw new Git2SemVerInvalidOperationException("Cannot split a segment that does not contain the commit.");
         }
 
-        _logger.LogTrace("Splitting segment {0} at commit {1}", Id, commit.CommitId.ShortSha);
+        _logger.LogTrace("Splitting segment {0} at commit {1}", Id, commit.CommitId.ObfuscatedSha);
 
         var keepCommits = _commits.Take(index).ToList();
         var newSegmentCommits = _commits.Skip(index).Take(_commits.Count - index).ToList();

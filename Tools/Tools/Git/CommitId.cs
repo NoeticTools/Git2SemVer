@@ -9,10 +9,17 @@ public sealed class CommitId : IEquatable<CommitId>, IEquatable<string>
     internal CommitId(string sha)
     {
         Id = sha;
-        ShortSha = sha.Length < 7 ? sha : sha.Substring(0, ShortShaLength);
+        ShortSha = ToShortSha(sha);
+    }
+
+    public static string ToShortSha(string sha)
+    {
+        return sha.Length < 7 ? sha : sha.Substring(0, ShortShaLength);
     }
 
     public string Id { get; }
+
+    public string ObfuscatedSha => GitObfuscation.GetObfuscatedSha(Id);
 
     public string ShortSha { get; }
 
