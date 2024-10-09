@@ -215,7 +215,7 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase
     /// </summary>
     public override bool Execute()
     {
-        using var logger = new CompositeLogger() { Level = LoggingLevel.Trace };
+        var logger = new CompositeLogger() { Level = LoggingLevel.Trace };
         logger.Add(new MSBuildTaskLogger(Log) {Level = LoggingLevel.Trace});
         var logFilePath = Path.Combine(Input_Env_IntermediateOutputDirectory, "Git2SemVer.MSBuild.log");
         logger.Add(new FileLogger(logFilePath) {Level = LoggingLevel.Trace});
@@ -227,9 +227,9 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase
             var config = Git2SemVerConfiguration.Load();
             var inputs = GetGeneratorInputs();
             var host = new BuildHostFactory(config, logger).Create(inputs.HostType,
-                                                                    inputs.BuildNumber,
-                                                                    inputs.BuildContext,
-                                                                    inputs.BuildIdFormat);
+                                                                   inputs.BuildNumber,
+                                                                   inputs.BuildContext,
+                                                                   inputs.BuildIdFormat);
             var gitTool = new GitTool(logger)
             {
                 WorkingDirectory = inputs.WorkingDirectory
@@ -247,8 +247,12 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase
         catch (Exception exception)
         {
             logger.LogError(exception);
-            Log.LogErrorFromException(exception);
+            //Log.LogErrorFromException(exception);
             return false;
+        }
+        finally
+        {
+            logger.Dispose();
         }
     }
 
