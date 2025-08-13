@@ -14,8 +14,14 @@ namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
 ///     Git repository (project) settings. To be located with the git repository.
 /// </remarks>
 // ReSharper disable once ClassNeverInstantiated.Global
-public sealed class ChangelogProjectSettings : JsonSettingsFileBase<ChangelogProjectSettings>, IEquatable<ChangelogProjectSettings>
+public sealed class ChangelogSettings : JsonSettingsFileBase<ChangelogSettings>, IEquatable<ChangelogSettings>, IChangelogSettings
 {
+    /// <summary>
+    ///     Changelog generation enabled flag.
+    /// </summary>
+    [JsonPropertyOrder(-10)]
+    public bool Enabled { get; set; } = true;
+
     /// <summary>
     ///     Optional url to a version's artifacts. May contain version placeholder '%VERSION%'.
     /// </summary>
@@ -37,6 +43,7 @@ public sealed class ChangelogProjectSettings : JsonSettingsFileBase<ChangelogPro
         new(7, "Other", "^(?!dev|Dev|refactor).*$")
     ];
 
+    // todo - this is not a setting but build data
     [JsonPropertyOrder(110)]
     public ConventionalCommitsSettings ConvCommits { get; set; } = new();
 
@@ -68,11 +75,11 @@ public sealed class ChangelogProjectSettings : JsonSettingsFileBase<ChangelogPro
     /// <summary>
     ///     Configuration file schema revision.
     /// </summary>
-    [JsonPropertyOrder(-10)]
+    [JsonPropertyOrder(-20)]
     // ReSharper disable once MemberCanBePrivate.Global
     public string Rev { get; set; } = "1";
 
-    public bool Equals(ChangelogProjectSettings? other)
+    public bool Equals(ChangelogSettings? other)
     {
         if (other is null)
         {
@@ -84,7 +91,7 @@ public sealed class ChangelogProjectSettings : JsonSettingsFileBase<ChangelogPro
 
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || (obj is ChangelogProjectSettings other && Equals(other));
+        return ReferenceEquals(this, obj) || (obj is ChangelogSettings other && Equals(other));
     }
 
     public override int GetHashCode()
@@ -94,8 +101,8 @@ public sealed class ChangelogProjectSettings : JsonSettingsFileBase<ChangelogPro
         return HashCode.Combine(ArtifactLinkPattern, categoriesCode, ConvCommits.GetHashCode(), DataDirectory, IssueLinkFormat, OutputFilePath, Rev);
     }
 
-    public static ChangelogProjectSettings FromJson(string json)
+    public static ChangelogSettings FromJson(string json)
     {
-        return Git2SemVerJsonSerializer.Deserialise<ChangelogProjectSettings>(json);
+        return Git2SemVerJsonSerializer.Deserialise<ChangelogSettings>(json);
     }
 }

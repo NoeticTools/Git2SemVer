@@ -18,7 +18,6 @@ public sealed class ProjectVersioning : IDisposable
 
     internal ProjectVersioning(IVersionGeneratorInputs inputs,
                                IBuildHost host,
-                               VersioningMode versioningMode,
                                IOutputsJsonIO outputsCacheJsonFile,
                                IVersioningEngine versioningEngine,
                                ILogger logger)

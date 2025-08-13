@@ -2,6 +2,7 @@
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.ConventionCommits;
 using NoeticTools.Git2SemVer.Core.Exceptions;
+using NoeticTools.Git2SemVer.Core.Extensions;
 using NoeticTools.Git2SemVer.Core.Tools.Git;
 using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
 

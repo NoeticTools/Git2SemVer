@@ -47,7 +47,7 @@ internal sealed class RunCommand(IConsoleIO console) : CommandBase(console), IRu
         var hostFactory = new BuildHostFactory(configuration, new TeamCityLoggerWriterFactory(logger).Create(), logger);
         var projectVersioning = new ProjectVersioningFactory(inputs, new NullMSBuildGlobalProperties(),
                                                              versionGeneratorFactory, hostFactory, logger)
-            .Create(VersioningMode.StandAloneProject, outputsJsonIO: outputJsonIO);
+            .Create(outputsJsonIO: outputJsonIO);
         projectVersioning.Run(VersioningMode.StandAloneProject);
 
         Console.WriteMarkupInfoLine("");

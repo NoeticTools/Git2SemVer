@@ -1,12 +1,15 @@
-﻿namespace NoeticTools.Git2SemVer.Core.ConventionCommits;
+﻿using NoeticTools.Git2SemVer.Core.FileSystem;
+
+
+namespace NoeticTools.Git2SemVer.Core.ConventionCommits;
 
 public abstract class JsonSettingsFileBase<T>
     where T : new()
 {
-    public static T Load(string dataDirectory, string filename)
+    public static T Load(DirectoryPath dataDirectory, FilePath filename)
     {
-        var filePath = Path.Combine(dataDirectory, filename);
-        if (File.Exists(filePath))
+        var filePath = dataDirectory + filename;
+        if (filePath.Exists())
         {
             return Load(filePath);
         }
@@ -16,22 +19,19 @@ public abstract class JsonSettingsFileBase<T>
         return config;
     }
 
-    private static T Load(string filePath)
+    private static T Load(FilePath filePath)
     {
         return Git2SemVerJsonSerializer.Read<T>(filePath);
     }
 
-    private void Save(string dataDirectory, string filename)
+    private void Save(DirectoryPath dataDirectory, FilePath filename)
     {
-        if (dataDirectory.Length > 0)
+        if (!dataDirectory.IsEmpty)
         {
-            if (!Directory.Exists(dataDirectory))
-            {
-                Directory.CreateDirectory(dataDirectory);
-            }
+            dataDirectory.Create();
         }
 
-        var filePath = Path.Combine(dataDirectory, filename);
+        var filePath = dataDirectory + filename;
         Git2SemVerJsonSerializer.Write(filePath, this);
     }
 

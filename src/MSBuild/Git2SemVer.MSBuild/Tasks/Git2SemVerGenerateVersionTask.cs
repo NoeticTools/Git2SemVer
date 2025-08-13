@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Extensions.DependencyInjection;
+using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Diagnostics;
 using NoeticTools.Git2SemVer.Core.Exceptions;
 using NoeticTools.Git2SemVer.Core.Logging;
@@ -300,8 +301,6 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
     /// </remarks>
     public bool UpdateHostBuildLabel { get; set; }
 
-    public VersioningMode VersioningMode { get; private set; }
-
     /// <summary>
     ///     The working directory.
     /// </summary>
@@ -336,22 +335,19 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
 
         try
         {
-            if (!string.IsNullOrWhiteSpace(SourceLinkAppendingSha))
+            if (!string.IsNullOrWhiteSpace(SourceLinkAppendingSha) &&
+                bool.Parse(SourceLinkAppendingSha))
             {
-                var sourceLinkAppendingSha = bool.Parse(SourceLinkAppendingSha);
-                if (sourceLinkAppendingSha)
-                {
-                    logger.LogWarning(new GSV003());
-                }
+                logger.LogWarning(new GSV003());
             }
 
-            var informationalVersion = GetCustomAttribute<AssemblyInformationalVersionAttribute>(GetType().Assembly).InformationalVersion;
-            logger.LogTrace("Git2SemVer.MSBuild version {0}", informationalVersion);
+            logger.LogTrace("Git2SemVer.MSBuild version {0}", GetType().Assembly.GetAbbreviatedInformationalVersion());
             logger.LogDebug("Executing Git2SemVer.MSBuild task to generate version. ({0})", DateTime.Now.ToString("o"));
 
+            VersioningMode versioningMode;
             try
             {
-                VersioningMode = (VersioningMode)Enum.Parse(typeof(VersioningMode), Mode);
+                versioningMode = (VersioningMode)Enum.Parse(typeof(VersioningMode), Mode);
             }
             catch (Exception exception)
             {
@@ -361,9 +357,9 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
             var servicesProvider = Services.ConfigureServices(this, logger, Log);
 
             using var projectVersioning = servicesProvider.GetService<ProjectVersioningFactory>()!
-                                                          .Create(VersioningMode);
+                                                          .Create();
 
-            var versioningOutputs = projectVersioning.Run(VersioningMode);
+            var versioningOutputs = projectVersioning.Run(versioningMode);
             SetOutputs(versioningOutputs.Versions);
 
             if (!ChangelogEnable)
@@ -412,11 +408,5 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
 
         logger.LogError(new GSV004(BuildScriptPath));
         return false;
-    }
-
-    private static T GetCustomAttribute<T>(Assembly assembly) where T : class
-    {
-        return (Attribute.GetCustomAttribute(assembly, typeof(T))
-            as T)!;
     }
 }

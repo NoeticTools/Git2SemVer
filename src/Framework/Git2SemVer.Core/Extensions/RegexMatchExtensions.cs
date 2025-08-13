@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 
-namespace NoeticTools.Git2SemVer.Core;
+namespace NoeticTools.Git2SemVer.Core.Extensions;
 
 public static class RegexMatchExtensions
 {

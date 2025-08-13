@@ -4,12 +4,12 @@
 namespace NoeticTools.Git2SemVer.Framework.Tests.ChangeLogging;
 
 [TestFixture]
-public class ChangelogProjectSettingsTests
+public class ChangelogSettingsTests
 {
     [Test]
     public void JsonRoundTripTest()
     {
-        var original = new ChangelogProjectSettings
+        var original = new ChangelogSettings
         {
             DataDirectory = "data_directory",
             OutputFilePath = "output/path",
@@ -25,7 +25,7 @@ public class ChangelogProjectSettingsTests
         };
         var json = original.ToJson();
 
-        var copy = ChangelogProjectSettings.FromJson(json);
+        var copy = ChangelogSettings.FromJson(json);
 
         Assert.That(copy, Is.EqualTo(original));
         Assert.That(copy.ConvCommits.GetHashCode(), Is.EqualTo(original.ConvCommits.GetHashCode()));
@@ -36,7 +36,7 @@ public class ChangelogProjectSettingsTests
     [Test]
     public void ToJsonWithDefaultsTest()
     {
-        var settings = new ChangelogProjectSettings();
+        var settings = new ChangelogSettings();
 
         var json = settings.ToJson();
 
@@ -45,6 +45,7 @@ public class ChangelogProjectSettingsTests
         Assert.That(json, Is.EqualTo("""
                                      {
                                        "Rev": "1",
+                                       "Enabled": true,
                                        "OutputFilePath": "CHANGELOG.md",
                                        "DataDirectory": ".git2semver",
                                        "ArtifactLinkPattern": "",

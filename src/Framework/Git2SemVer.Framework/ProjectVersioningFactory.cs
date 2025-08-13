@@ -18,7 +18,7 @@ public sealed class ProjectVersioningFactory(
     IBuildHostFactory buildHostFactory,
     ILogger logger)
 {
-    public ProjectVersioning Create(VersioningMode versioningMode, IOutputsJsonIO? outputsJsonIO = null)
+    public ProjectVersioning Create(IOutputsJsonIO? outputsJsonIO = null)
     {
         if (inputs == null)
         {
@@ -39,7 +39,6 @@ public sealed class ProjectVersioningFactory(
                                                               convCommitSettings);
         var projectVersioning = new ProjectVersioning(inputs, 
                                                       host,
-                                                      versioningMode,
                                                       outputsJsonIO,
                                                       versionGenerator,
                                                       logger);

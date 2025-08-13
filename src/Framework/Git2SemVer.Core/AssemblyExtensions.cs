@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
+using System.Xml.Schema;
 using NoeticTools.Git2SemVer.Core.Exceptions;
+using NoeticTools.Git2SemVer.Core.Extensions;
+using Semver;
 
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -8,9 +11,27 @@ namespace NoeticTools.Git2SemVer.Core;
 
 public static class AssemblyExtensions
 {
+    public static T GetCustomAttribute<T>(this Assembly assembly) where T : class
+    {
+        return (Attribute.GetCustomAttribute(assembly, typeof(T))
+            as T)!;
+    }
+
+    /// <summary>
+    /// Get informational version from the assembly with the SHA, if present, abbreviated.
+    /// </summary>
+    public static string GetAbbreviatedInformationalVersion(this Assembly assembly)
+    {
+        var informationalVersion = assembly.GetInformationalVersion();
+        return !SemVersion.TryParse(informationalVersion, SemVersionStyles.Strict, out var semver) 
+            ? informationalVersion : semver.WithAbbreviatedGitSha().ToString();
+    }
+
     public static string GetInformationalVersion(this Assembly assembly)
     {
-        return assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                        ?? throw new InvalidOperationException("AssemblyInformationalVersionAttribute not found.");
+        return attribute.InformationalVersion;
     }
 
     public static string GetResourceFileContent(this Assembly assembly, string filename)

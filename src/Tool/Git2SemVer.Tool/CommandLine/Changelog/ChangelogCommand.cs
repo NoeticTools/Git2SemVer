@@ -31,7 +31,7 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
 
             var createNewChangelog = !File.Exists(cmdLineSettings.OutputFilePath);
             var priorChangelog = createNewChangelog ? "" : File.ReadAllText(cmdLineSettings.OutputFilePath);
-            var projectSettings = ChangelogProjectSettings.Load(cmdLineSettings.DataDirectory, ChangelogConstants.ProjectSettingsFilename);
+            var projectSettings = ChangelogSettings.Load(cmdLineSettings.DataDirectory, ChangelogConstants.ProjectSettingsFilename);
             var versioningResult = RunVersionGenerator(cmdLineSettings, projectSettings.ConvCommits);
 
             var changelogGenerator = new ChangelogGenerator(projectSettings, logger);

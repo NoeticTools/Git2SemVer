@@ -1,4 +1,5 @@
 ﻿using NoeticTools.Git2SemVer.Core.ConventionCommits;
+using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework.ChangeLogging.Exceptions;
 using Scriban;
@@ -8,7 +9,7 @@ using Semver;
 namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
 
 [RegisterTransient]
-public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogger logger)
+public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
 {
     /// <summary>
     ///     Generate or update changelog document.
@@ -25,24 +26,19 @@ public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogge
     public string Execute(VersioningOutputs versioning,
                           string releaseUrl,
                           string releaseAs,
-                          string dataDirectory,
-                          string outputFilePath,
-                          string workingDirectory)
+                          DirectoryPath dataDirectory,
+                          FilePath outputFilePath,
+                          DirectoryPath workingDirectory)
     {
         releaseUrl = GetFirstNonEmptyOption(releaseUrl,
-                                            projectSettings.ArtifactLinkPattern,
+                                            settings.ArtifactLinkPattern,
                                             ChangelogConstants.DefaultArtifactLinkPattern);
-        dataDirectory = ToAbsolutePath(GetFirstNonEmptyOption(dataDirectory,
-                                                              projectSettings.DataDirectory),
-                                       ChangelogConstants.DefaultDataDirectory,
-                                       workingDirectory);
-        outputFilePath = ToAbsolutePath(GetFirstNonEmptyOption(outputFilePath,
-                                                               projectSettings.OutputFilePath),
-                                        ChangelogConstants.DefaultFilename,
-                                        workingDirectory);
 
-        var createNewChangelog = !File.Exists(outputFilePath);
-        var changelogToUpdate = createNewChangelog ? "" : File.ReadAllText(outputFilePath);
+        dataDirectory = dataDirectory.ToAbsolute(settings.DataDirectory, workingDirectory);
+        outputFilePath = outputFilePath.ToAbsolute(settings.OutputFilePath, workingDirectory);
+
+        var createNewChangelog = !outputFilePath.Exists();
+        var changelogToUpdate = createNewChangelog ? "" : outputFilePath.ReadAllText();
 
         var lastRunData = createNewChangelog ? new LastRunData() : LastRunData.Load(dataDirectory, outputFilePath, logger);
         var scribanTemplate = new ChangelogTemplateReader(logger).Load(dataDirectory);
@@ -50,7 +46,7 @@ public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogge
         var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions, versioning.Metadata.Contributing);
         var changelog = BuildChangelogContent(conventionalCommitsVersionInfo, scribanTemplate, releaseUrl, releaseAs, lastRunData, changelogToUpdate);
 
-        if (outputFilePath.Length <= 0)
+        if (outputFilePath.IsEmpty)
         {
             return changelog;
         }
@@ -59,7 +55,7 @@ public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogge
         lastRunData.ForcedReleasedTitle = releaseAs;
         lastRunData.Save(dataDirectory, outputFilePath);
 
-        File.WriteAllText(outputFilePath, changelog);
+        outputFilePath.WriteAllText(changelog);
 
         return changelog;
     }
@@ -81,8 +77,8 @@ public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogge
 
         var messagesWithChanges = GetUnhandledChanges(convCommits.ConventionalCommits, lastRunData.HandledChanges);
 
-        var issueMarkdownFormatter = new MarkdownLinkFormatter(projectSettings.IssueLinkFormat);
-        var orderedCategories = projectSettings.Categories.OrderBy(x => x.Order);
+        var issueMarkdownFormatter = new MarkdownLinkFormatter(settings.IssueLinkFormat);
+        var orderedCategories = settings.Categories.OrderBy(x => x.Order);
         var changeCategories = orderedCategories.Select(category => ExtractChangeCategory(category, messagesWithChanges, issueMarkdownFormatter))
                                                 .ToList();
         if (changelogToUpdate.Length > 0 && changeCategories.Count == 0)
@@ -170,22 +166,6 @@ public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogge
         return unhandledMessages.OrderBy(x => x.Description).ToList();
     }
 
-    //private static string MergeOptions(string primaryValue, string secondaryValue, string defaultValue)
-    //{
-    //    if (!string.IsNullOrEmpty(primaryValue))
-    //    {
-    //        return primaryValue;
-    //    }
-
-    //    var value = secondaryValue;
-    //    if (string.IsNullOrEmpty(value))
-    //    {
-    //        value = defaultValue;
-    //    }
-
-    //    return value;
-    //}
-
     private static string RenderContent(ConventionalCommitsVersionInfo inputs,
                                         string scribanTemplate,
                                         string releaseUrl,
@@ -222,7 +202,7 @@ public class ChangelogGenerator(ChangelogProjectSettings projectSettings, ILogge
             path = defaultPath;
         }
 
-        if (defaultPath.Length > 0 && Path.IsPathRooted(path))
+        if (defaultPath.Length > 0 && Path.IsPathRooted(path)) // todo - check if this is correct
         {
             return path;
         }
