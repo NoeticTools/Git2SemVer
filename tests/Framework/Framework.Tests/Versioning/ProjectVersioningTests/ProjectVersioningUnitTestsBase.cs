@@ -20,7 +20,7 @@ internal abstract class ProjectVersioningUnitTestsBase
         VersionGenerator = new Mock<IVersioningEngine>();
         _logger = new NUnitLogger();
 
-        Target = new ProjectVersioning(Inputs.Object, Host.Object, OutputsCacheJsonFile.Object, VersionGenerator.Object, _logger);
+        Target = new ProjectVersioning(Inputs.Object, Host.Object, VersioningMode.StandAloneProject, OutputsCacheJsonFile.Object, VersionGenerator.Object, _logger);
 
         Inputs.Setup(x => x.SolutionSharedDirectory).Returns("SolutionSharedDirectory");
         Inputs.Setup(x => x.IntermediateOutputDirectory).Returns("IntermediateOutputDirectory");

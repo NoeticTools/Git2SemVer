@@ -29,16 +29,16 @@ public class ChangeLogTaskAbsPathOptionsTests
     public void DoesNotExpandRootedPathsTest()
     {
         var taskOptions = new Mock<IChangeLogGeneratorTaskOptions>();
-        taskOptions.Setup(x => x.WorkingDirectory).Returns(@"c:\working_directory");
-        taskOptions.Setup(x => x.ChangelogDataDirectory).Returns(@"c:\my_directory\.data_directory");
-        taskOptions.Setup(x => x.ChangelogOutputFilePath).Returns(@"c:\my_directory\output\MyChangelog.md");
+        taskOptions.Setup(x => x.WorkingDirectory).Returns(@"\working_directory");
+        taskOptions.Setup(x => x.ChangelogDataDirectory).Returns(@"\my_directory\.data_directory");
+        taskOptions.Setup(x => x.ChangelogOutputFilePath).Returns(@"\my_directory\output\MyChangelog.md");
         taskOptions.Setup(x => x.ChangelogEnable).Returns(true);
         taskOptions.Setup(x => x.ChangelogReleaseAs).Returns("");
 
         var target = new ChangeLogTaskAbsPathOptions(taskOptions.Object);
 
-        Assert.That(target.ChangelogDataDirectory, Is.EqualTo(@"c:\my_directory\.data_directory"));
-        Assert.That(target.ChangelogOutputFilePath, Is.EqualTo(@"c:\my_directory\output\MyChangelog.md"));
+        Assert.That(target.ChangelogDataDirectory, Is.EqualTo(@"\my_directory\.data_directory"));
+        Assert.That(target.ChangelogOutputFilePath, Is.EqualTo(@"\my_directory\output\MyChangelog.md"));
         Assert.That(target.ChangelogEnable, Is.True);
         Assert.That(target.ChangelogReleaseAs, Is.Empty);
     }

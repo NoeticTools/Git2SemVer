@@ -16,12 +16,12 @@ public sealed class ProjectVersioning : IDisposable
     private readonly IOutputsJsonIO _outputsCacheJsonFile;
     private readonly IVersioningEngine _versioningEngine;
 
-    internal ProjectVersioning(
-        IVersionGeneratorInputs inputs,
-        IBuildHost host,
-        IOutputsJsonIO outputsCacheJsonFile,
-        IVersioningEngine versioningEngine,
-        ILogger logger)
+    internal ProjectVersioning(IVersionGeneratorInputs inputs,
+                               IBuildHost host,
+                               VersioningMode versioningMode,
+                               IOutputsJsonIO outputsCacheJsonFile,
+                               IVersioningEngine versioningEngine,
+                               ILogger logger)
     {
         _inputs = inputs;
         _host = host;

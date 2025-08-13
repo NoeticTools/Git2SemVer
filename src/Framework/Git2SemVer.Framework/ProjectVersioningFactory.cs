@@ -18,7 +18,7 @@ public sealed class ProjectVersioningFactory(
     IBuildHostFactory buildHostFactory,
     ILogger logger)
 {
-    public ProjectVersioning Create(IOutputsJsonIO? outputsJsonIO = null)
+    public ProjectVersioning Create(VersioningMode versioningMode, IOutputsJsonIO? outputsJsonIO = null)
     {
         if (inputs == null)
         {
@@ -33,7 +33,9 @@ public sealed class ProjectVersioningFactory(
                                            inputs.BuildIdFormat);
         var convCommitSettings = new ConventionalCommitsSettings();
         var versionGenerator = versioningEngineFactory.Create(inputs, msBuildGlobalProperties, outputsJsonIO, host, convCommitSettings);
-        var projectVersioning = new ProjectVersioning(inputs, host,
+        var projectVersioning = new ProjectVersioning(inputs, 
+                                                      host,
+                                                      versioningMode,
                                                       outputsJsonIO,
                                                       versionGenerator,
                                                       logger);
