@@ -5,7 +5,7 @@ using NoeticTools.Git2SemVer.Framework.ChangeLogging.Task;
 namespace NoeticTools.Git2SemVer.Framework.Tests.ChangeLogging;
 
 [TestFixture]
-public class ChangeGeneratorTaskExpandedOptionsTests
+public class ChangeLogTaskAbsPathOptionsTests
 {
     [Test]
     public void ExpandsNonRootedPathsTest()
@@ -17,7 +17,7 @@ public class ChangeGeneratorTaskExpandedOptionsTests
         taskOptions.Setup(x => x.ChangelogEnable).Returns(true);
         taskOptions.Setup(x => x.ChangelogReleaseAs).Returns("");
 
-        var target = new ChangeGeneratorTaskExpandedOptions(taskOptions.Object);
+        var target = new ChangeLogTaskAbsPathOptions(taskOptions.Object);
 
         Assert.That(target.ChangelogDataDirectory, Is.EqualTo(@"c:\working_directory\.data_directory"));
         Assert.That(target.ChangelogOutputFilePath, Is.EqualTo(@"c:\working_directory\MyChangelog.md"));
@@ -35,7 +35,7 @@ public class ChangeGeneratorTaskExpandedOptionsTests
         taskOptions.Setup(x => x.ChangelogEnable).Returns(true);
         taskOptions.Setup(x => x.ChangelogReleaseAs).Returns("");
 
-        var target = new ChangeGeneratorTaskExpandedOptions(taskOptions.Object);
+        var target = new ChangeLogTaskAbsPathOptions(taskOptions.Object);
 
         Assert.That(target.ChangelogDataDirectory, Is.EqualTo(@"c:\my_directory\.data_directory"));
         Assert.That(target.ChangelogOutputFilePath, Is.EqualTo(@"c:\my_directory\output\MyChangelog.md"));

@@ -23,7 +23,7 @@ internal sealed class Services
 
         services.AddSingleton(logger);
         services.AddSingleton<IVersionGeneratorInputs>(_ => task);
-        services.AddSingleton<IChangeLogGeneratorTaskOptions>(_ => new ChangeGeneratorTaskExpandedOptions(task));
+        services.AddSingleton<IChangeLogGeneratorTaskOptions>(_ => new ChangeLogTaskAbsPathOptions(task));
         services.AddSingleton<IMSBuildGlobalProperties>(_ => new MSBuildGlobalProperties(task.BuildEngine6));
         services.AddSingleton(_ => Git2SemVerLocalSettings.Load());
         services.AddSingleton(_ => new MSBuildTeamCityWriterFactory(taskLogging).Create());
