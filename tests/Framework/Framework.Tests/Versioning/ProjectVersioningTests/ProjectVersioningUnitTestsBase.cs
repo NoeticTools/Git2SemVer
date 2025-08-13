@@ -33,7 +33,7 @@ internal abstract class ProjectVersioningUnitTestsBase
         OutputsCacheJsonFile.Setup(x => x.Load("SolutionSharedDirectory")).Returns(SharedCachedOutputs.Object);
 
         GeneratedOutputs = new Mock<IVersionOutputs>();
-        VersionGenerator.Setup(x => x.PrebuildRun()).Returns(new VersioningOutputs(GeneratedOutputs.Object, null));
+        VersionGenerator.Setup(x => x.PrebuildRun(It.IsAny<VersioningMode>())).Returns(new VersioningOutputs(GeneratedOutputs.Object, null));
     }
 
     [TearDown]
@@ -58,9 +58,4 @@ internal abstract class ProjectVersioningUnitTestsBase
     protected ProjectVersioning Target { get; private set; }
 
     protected Mock<IVersioningEngine> VersionGenerator { get; private set; }
-
-    protected void ModeIs(VersioningMode mode)
-    {
-        Inputs.Setup(x => x.VersioningMode).Returns(mode);
-    }
 }

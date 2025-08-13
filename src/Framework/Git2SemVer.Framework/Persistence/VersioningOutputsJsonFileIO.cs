@@ -51,7 +51,7 @@ public sealed class VersioningOutputsJsonFileIO : IOutputsJsonIO
         return JsonSerializer.Serialize(versionInfo, SerialiseOptions);
     }
 
-    public void Write(string directory, IVersionOutputs outputs)
+    public void Save(string directory, IVersionOutputs outputs)
     {
         Git2SemVerArgumentException.ThrowIfNullOrEmpty(directory, nameof(directory));
         Git2SemVerArgumentException.ThrowIfNull(outputs, nameof(outputs));

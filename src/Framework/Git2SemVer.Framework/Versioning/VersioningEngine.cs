@@ -28,19 +28,19 @@ internal sealed class VersioningEngine(
         gitTool.Dispose();
     }
 
-    public VersioningOutputs OutsideOfBuildRun()
+    public VersioningOutputs OutsideOfBuildRun(VersioningMode versioningMode)
     {
-        return GetVersionOutputs();
+        return GetVersionOutputs(versioningMode);
     }
 
-    public VersioningOutputs PrebuildRun()
+    public VersioningOutputs PrebuildRun(VersioningMode versioningMode)
     {
         var stopwatch = Stopwatch.StartNew();
 
         host.BumpBuildNumber();
-        var outputs = GetVersionOutputs();
+        var outputs = GetVersionOutputs(versioningMode);
 
-        SaveGeneratedVersions(outputs.Versions);
+        SaveGeneratedVersions(outputs.Versions, versioningMode);
 
         stopwatch.Stop();
 
@@ -51,7 +51,7 @@ internal sealed class VersioningEngine(
         return outputs;
     }
 
-    private VersioningOutputs GetVersionOutputs()
+    private VersioningOutputs GetVersionOutputs(VersioningMode versioningMode)
     {
         var calcResult = gitWalker.CalculateSemanticVersion();
         var outputs = new VersionOutputs(new GitOutputs(gitTool,
@@ -63,7 +63,7 @@ internal sealed class VersioningEngine(
 
         if (inputs.WriteConventionalCommitsInfo)
         {
-            SaveConventionalCommitsInfo(outputs, calcResult.Contributing);
+            SaveConventionalCommitsInfo(outputs, calcResult.Contributing, versioningMode);
         }
 
         return new VersioningOutputs(outputs, calcResult);
@@ -86,12 +86,12 @@ internal sealed class VersioningEngine(
         }
     }
 
-    private void SaveConventionalCommitsInfo(VersionOutputs outputs, ContributingCommits contributing)
+    private void SaveConventionalCommitsInfo(VersionOutputs outputs, ContributingCommits contributing, VersioningMode versioningMode)
     {
         var conventionalCommitsInfo = new ConventionalCommitsVersionInfo(outputs, contributing);
         var filePath = Path.Combine(inputs.IntermediateOutputDirectory, ChangelogConstants.DefaultConvCommitsInfoFilename);
         conventionalCommitsInfo.Save(filePath);
-        if (inputs.VersioningMode == VersioningMode.StandAloneProject)
+        if (versioningMode == VersioningMode.StandAloneProject)
         {
             return;
         }
@@ -100,12 +100,14 @@ internal sealed class VersioningEngine(
         conventionalCommitsInfo.Save(Path.Combine(inputs.SolutionSharedDirectory, ChangelogConstants.DefaultConvCommitsInfoFilename));
     }
 
-    private void SaveGeneratedVersions(IVersionOutputs outputs)
+    private void SaveGeneratedVersions(IVersionOutputs outputs, VersioningMode versioningMode)
     {
-        generatedOutputsJsonFile.Write(inputs.IntermediateOutputDirectory, outputs);
-        if (inputs.VersioningMode != VersioningMode.StandAloneProject)
+        generatedOutputsJsonFile.Save(inputs.IntermediateOutputDirectory, outputs);
+        if (versioningMode == VersioningMode.StandAloneProject)
         {
-            generatedOutputsJsonFile.Write(inputs.SolutionSharedDirectory, outputs);
+            return;
         }
+
+        generatedOutputsJsonFile.Save(inputs.SolutionSharedDirectory, outputs);
     }
 }

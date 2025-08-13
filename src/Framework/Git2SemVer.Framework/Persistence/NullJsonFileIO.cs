@@ -12,7 +12,7 @@ public sealed class NullJsonFileIO : IOutputsJsonIO
         throw new NotImplementedException("NullJsonFileIO");
     }
 
-    public void Write(string directory, IVersionOutputs outputs)
+    public void Save(string directory, IVersionOutputs outputs)
     {
         throw new NotImplementedException("NullJsonFileIO");
     }

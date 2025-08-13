@@ -11,7 +11,6 @@ internal class SolutionClientProjectUnitTests : ProjectVersioningUnitTestsBase
     [SetUp]
     public void SetUp()
     {
-        ModeIs(VersioningMode.SolutionClientProject);
         Host.Setup(x => x.BuildNumber).Returns("42");
     }
 
@@ -21,9 +20,9 @@ internal class SolutionClientProjectUnitTests : ProjectVersioningUnitTestsBase
         LocalCachedOutputs.Setup(x => x.IsValid).Returns(false);
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(false);
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionClientProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Once);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionClientProject), Times.Once);
         Assert.That(result.Versions, Is.SameAs(GeneratedOutputs.Object));
     }
 
@@ -34,9 +33,9 @@ internal class SolutionClientProjectUnitTests : ProjectVersioningUnitTestsBase
         LocalCachedOutputs.Setup(x => x.BuildNumber).Returns("42");
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(false);
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionClientProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Once);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionClientProject), Times.Once);
         Assert.That(result.Versions, Is.SameAs(GeneratedOutputs.Object));
     }
 
@@ -47,9 +46,9 @@ internal class SolutionClientProjectUnitTests : ProjectVersioningUnitTestsBase
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(true);
         SharedCachedOutputs.Setup(x => x.BuildNumber).Returns("42");
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionClientProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Once);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionClientProject), Times.Once);
         Assert.That(result.Versions, Is.SameAs(GeneratedOutputs.Object));
     }
 
@@ -60,9 +59,9 @@ internal class SolutionClientProjectUnitTests : ProjectVersioningUnitTestsBase
         LocalCachedOutputs.Setup(x => x.BuildNumber).Returns("41");
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(false);
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionClientProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Never);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionClientProject), Times.Never);
         Assert.That(result.Versions, Is.SameAs(SharedCachedOutputs.Object));
     }
 
@@ -73,9 +72,9 @@ internal class SolutionClientProjectUnitTests : ProjectVersioningUnitTestsBase
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(true);
         SharedCachedOutputs.Setup(x => x.BuildNumber).Returns("43");
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionClientProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Never);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionClientProject), Times.Never);
         Assert.That(result.Versions, Is.SameAs(SharedCachedOutputs.Object));
     }
 }

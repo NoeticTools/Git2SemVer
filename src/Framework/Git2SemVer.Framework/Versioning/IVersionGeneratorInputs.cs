@@ -156,8 +156,6 @@ public interface IVersionGeneratorInputs : ICommonTaskOptions
     // ReSharper disable once UnusedMember.Global
     string Version { get; }
 
-    VersioningMode VersioningMode { get; }
-
     /// <summary>
     ///     Optional input from MSBuild
     ///     <see href="https://gist.github.com/jonlabelle/34993ee032c26420a0943b1c9d106cdc#versionsuffix">VersionSuffix</see>

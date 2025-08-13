@@ -38,8 +38,6 @@ internal sealed class VersionGeneratorInputs : IVersionGeneratorInputs
 
     public string Version { get; } = "";
 
-    public VersioningMode VersioningMode { get; set; } = VersioningMode.StandAloneProject;
-
     public string VersionSuffix { get; } = "";
 
     public string WorkingDirectory { get; } = "";

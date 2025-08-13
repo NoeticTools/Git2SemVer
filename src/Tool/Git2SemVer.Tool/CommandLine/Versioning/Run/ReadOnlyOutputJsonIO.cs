@@ -11,7 +11,7 @@ internal class ReadOnlyOutputJsonIO : IOutputsJsonIO
         return new VersioningOutputsJsonFileIO().Load(directory);
     }
 
-    public void Write(string directory, IVersionOutputs outputs)
+    public void Save(string directory, IVersionOutputs outputs)
     {
         // do nothing
     }

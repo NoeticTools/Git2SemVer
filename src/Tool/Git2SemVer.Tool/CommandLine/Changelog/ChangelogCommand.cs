@@ -77,11 +77,11 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
         }
     }
 
-    private VersioningOutputs RunVersionGenerator(ChangelogCommandSettings cmdLineSettings, ConventionalCommitsSettings convCommits)
+    private VersioningOutputs RunVersionGenerator(ChangelogCommandSettings cmdLineSettings, 
+                                                  ConventionalCommitsSettings convCommits)
     {
         var inputs = new VersionGeneratorInputs
         {
-            VersioningMode = VersioningMode.StandAloneProject,
             IntermediateOutputDirectory = cmdLineSettings.DataDirectory,
             HostType = cmdLineSettings.HostType ?? "",
             WriteConventionalCommitsInfo = false
@@ -94,7 +94,7 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
                                                                                     new NullJsonFileIO(),
                                                                                     host,
                                                                                     convCommits);
-        return versionGenerator.OutsideOfBuildRun();
+        return versionGenerator.OutsideOfBuildRun(VersioningMode.StandAloneProject);
     }
 
     private bool WriteConsolePreamble(ChangelogCommandSettings cmdLineSettings)

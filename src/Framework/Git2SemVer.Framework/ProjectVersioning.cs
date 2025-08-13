@@ -36,7 +36,7 @@ public sealed class ProjectVersioning : IDisposable
         _host.Dispose();
     }
 
-    public VersioningOutputs Run()
+    public VersioningOutputs Run(VersioningMode versioningMode)
     {
         try
         {
@@ -47,7 +47,7 @@ public sealed class ProjectVersioning : IDisposable
                 { VersioningMode.StandAloneProject, PerformStandAloneProjectVersioning }
             };
 
-            var outputs = handlers[_inputs.VersioningMode]();
+            var outputs = handlers[versioningMode]();
             UpdateHostBuildLabel(outputs);
             return outputs;
         }
@@ -77,11 +77,11 @@ public sealed class ProjectVersioning : IDisposable
         var lastBuildNumber = GetClientLastBuildNumber();
         if (lastBuildNumber == _host.BuildNumber)
         {
-            return _versioningEngine.PrebuildRun();
+            return _versioningEngine.PrebuildRun(VersioningMode.SolutionClientProject);
         }
 
         var output = _outputsCacheJsonFile.Load(_inputs.SolutionSharedDirectory);
-        _outputsCacheJsonFile.Write(_inputs.IntermediateOutputDirectory, output);
+        _outputsCacheJsonFile.Save(_inputs.IntermediateOutputDirectory, output);
         return new VersioningOutputs(output, null);
     }
 
@@ -89,13 +89,13 @@ public sealed class ProjectVersioning : IDisposable
     {
         _logger.LogTrace("Versioning mode: Solution");
         var output = _outputsCacheJsonFile.Load(_inputs.SolutionSharedDirectory);
-        return !output.IsValid ? _versioningEngine.PrebuildRun() : new VersioningOutputs(output, null);
+        return !output.IsValid ? _versioningEngine.PrebuildRun(VersioningMode.SolutionVersioningProject) : new VersioningOutputs(output, null);
     }
 
     private VersioningOutputs PerformStandAloneProjectVersioning()
     {
         _logger.LogTrace("Versioning mode: Stand-alone project");
-        return _versioningEngine.PrebuildRun();
+        return _versioningEngine.PrebuildRun(VersioningMode.StandAloneProject);
     }
 
     private void UpdateHostBuildLabel(VersioningOutputs output)

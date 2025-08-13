@@ -32,7 +32,11 @@ public sealed class ProjectVersioningFactory(
                                            inputs.BuildContext,
                                            inputs.BuildIdFormat);
         var convCommitSettings = new ConventionalCommitsSettings();
-        var versionGenerator = versioningEngineFactory.Create(inputs, msBuildGlobalProperties, outputsJsonIO, host, convCommitSettings);
+        var versionGenerator = versioningEngineFactory.Create(inputs, 
+                                                              msBuildGlobalProperties, 
+                                                              outputsJsonIO, 
+                                                              host, 
+                                                              convCommitSettings);
         var projectVersioning = new ProjectVersioning(inputs, 
                                                       host,
                                                       versioningMode,

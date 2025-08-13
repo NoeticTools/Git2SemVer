@@ -20,7 +20,6 @@ internal sealed class RunCommand(IConsoleIO console) : CommandBase(console), IRu
 
         var inputs = new VersionGeneratorInputs
         {
-            VersioningMode = VersioningMode.StandAloneProject,
             IntermediateOutputDirectory = settings.OutputDirectory,
             WriteConventionalCommitsInfo = settings.EnableConvCommitsJsonWrite,
             ReleaseTagFormat = settings.ReleaseTagFormat!
@@ -49,7 +48,7 @@ internal sealed class RunCommand(IConsoleIO console) : CommandBase(console), IRu
         var projectVersioning = new ProjectVersioningFactory(inputs, new NullMSBuildGlobalProperties(),
                                                              versionGeneratorFactory, hostFactory, logger)
             .Create(VersioningMode.StandAloneProject, outputsJsonIO: outputJsonIO);
-        projectVersioning.Run();
+        projectVersioning.Run(VersioningMode.StandAloneProject);
 
         Console.WriteMarkupInfoLine("");
         Console.WriteMarkupInfoLine("Completed");

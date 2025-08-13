@@ -363,7 +363,7 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
             using var projectVersioning = servicesProvider.GetService<ProjectVersioningFactory>()!
                                                           .Create(VersioningMode);
 
-            var versioningOutputs = projectVersioning.Run();
+            var versioningOutputs = projectVersioning.Run(VersioningMode);
             SetOutputs(versioningOutputs.Versions);
 
             if (!ChangelogEnable)

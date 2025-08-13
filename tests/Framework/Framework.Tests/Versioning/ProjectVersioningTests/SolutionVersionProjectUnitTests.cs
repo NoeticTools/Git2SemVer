@@ -11,7 +11,6 @@ internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
     [SetUp]
     public void SetUp()
     {
-        ModeIs(VersioningMode.SolutionVersioningProject);
         SharedCachedOutputs.Setup(x => x.BuildNumber).Returns("42");
     }
 
@@ -20,9 +19,9 @@ internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
     {
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(false);
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionVersioningProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Once);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionVersioningProject), Times.Once);
         Assert.That(result.Versions, Is.SameAs(GeneratedOutputs.Object));
         OutputsCacheJsonFile.Verify(x => x.Load("IntermediateOutputDirectory"), Times.Never);
     }
@@ -32,9 +31,9 @@ internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
     {
         SharedCachedOutputs.Setup(x => x.IsValid).Returns(true);
 
-        var result = Target.Run();
+        var result = Target.Run(VersioningMode.SolutionVersioningProject);
 
-        VersionGenerator.Verify(x => x.PrebuildRun(), Times.Never);
+        VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionVersioningProject), Times.Never);
         Assert.That(result.Versions, Is.SameAs(SharedCachedOutputs.Object));
         OutputsCacheJsonFile.Verify(x => x.Load("IntermediateOutputDirectory"), Times.Never);
     }
