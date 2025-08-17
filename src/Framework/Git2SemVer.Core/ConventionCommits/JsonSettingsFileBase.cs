@@ -26,11 +26,6 @@ public abstract class JsonSettingsFileBase<T>
 
     private void Save(DirectoryPath dataDirectory, FilePath filename)
     {
-        if (!dataDirectory.IsEmpty)
-        {
-            dataDirectory.Create();
-        }
-
         var filePath = dataDirectory + filename;
         Git2SemVerJsonSerializer.Write(filePath, this);
     }

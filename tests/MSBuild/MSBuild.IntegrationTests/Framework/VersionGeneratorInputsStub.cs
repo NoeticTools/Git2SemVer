@@ -49,7 +49,7 @@ public class VersionGeneratorInputsStub : IVersionGeneratorInputs
 
     public bool WriteConventionalCommitsInfo { get; } = false;
 
-    public bool ValidateScriptInputs(ILogger logger)
+    public bool Validate(ILogger logger)
     {
         return true;
     }

@@ -6,6 +6,38 @@ namespace NoeticTools.Git2SemVer.Core.Tests.FileSystem;
 [TestFixture]
 public class FilePathTests
 {
+    [TestCase(DirectoryPath.PreferredDirectoryDelimiter)]
+    [TestCase('\\')]
+    public void AddDirectoryDelimiterTest(char delimiter)
+    {
+        var filePath = new FilePath("/test/dir");
+
+        var result = filePath + delimiter;
+
+        Assert.That(result, Is.TypeOf<DirectoryPath>());
+        Assert.That(result.ToString(), Is.EqualTo("/test/dir/"));
+    }
+
+    [Test]
+    public void AddStringReturnsStringTest()
+    {
+        // ReSharper disable once StringLiteralTypo
+        var filePath = new FilePath("/test/dir") + "ectory";
+
+        Assert.That(filePath, Is.TypeOf<string>());
+        Assert.That(filePath, Is.EqualTo("/test/directory"));
+    }
+
+    [Test]
+    public void FilenameTest()
+    {
+        var filePath = new FilePath("/test/dir/file.txt");
+
+        var result = filePath.FileName;
+
+        Assert.That(result, Is.EqualTo("file.txt"));
+    }
+
     [TestCase("file.txt", false)]
     [TestCase("../file.txt", false)]
     [TestCase(".data_directory/file.txt", false)]
@@ -16,6 +48,18 @@ public class FilePathTests
     {
         var filePath = new FilePath(path);
         Assert.That(filePath.IsAbsolute, Is.EqualTo(expected));
+    }
+
+    [TestCase("", true)]
+    [TestCase("a", false)]
+    [TestCase("/a", false)]
+    public void IsEmptyTest(string input, bool expected)
+    {
+        var filePath = new FilePath(input);
+
+        var result = filePath.IsEmptyPath;
+
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]

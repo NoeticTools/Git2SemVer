@@ -44,7 +44,7 @@ internal sealed class VersionGeneratorInputs : IVersionGeneratorInputs
 
     public bool WriteConventionalCommitsInfo { get; set; }
 
-    public bool ValidateScriptInputs(ILogger logger)
+    public bool Validate(ILogger logger)
     {
         return true;
     }

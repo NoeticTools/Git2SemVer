@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using NoeticTools.Git2SemVer.Core;
@@ -7,7 +6,6 @@ using NoeticTools.Git2SemVer.Core.Diagnostics;
 using NoeticTools.Git2SemVer.Core.Exceptions;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging;
 using NoeticTools.Git2SemVer.Framework.ChangeLogging.Task;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Versioning;
@@ -388,7 +386,7 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
         }
     }
 
-    public bool ValidateScriptInputs(ILogger logger)
+    bool IVersionGeneratorInputs.Validate(ILogger logger)
     {
         if (logger == null)
         {

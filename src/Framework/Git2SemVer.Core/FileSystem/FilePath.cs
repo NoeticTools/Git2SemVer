@@ -9,7 +9,10 @@ public sealed class FilePath(string path)
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
-    public bool IsEmpty => _path.Length == 0;
+    public bool IsEmptyPath => _path.Length == 0;
+
+    public string FileName => Path.GetFileName(_path)
+        ?? throw new Git2SemVerArgumentException($"The '{_path}' path does not have a file name component.");
 
     public bool Exists()
     {
@@ -63,9 +66,25 @@ public sealed class FilePath(string path)
         return _path;
     }
 
-    public void WriteAllText(string content)
+    public DirectoryPath GetDirectory()
+    {
+        return Path.GetDirectoryName(_path)
+            ?? throw new Git2SemVerArgumentException($"The '{_path}' path does not have a directory component.");
+    }
+
+    public void WriteAllText(string content, bool createDirectory = true)
     {
         Git2SemVerArgumentException.ThrowIfNull(content, $"The {nameof(content)} argument must not be null.");
+
+        if (createDirectory)
+        {
+            var directory = GetDirectory();
+            if (!directory.Exists())
+            {
+                directory.Create();
+            }
+        }
+
         File.WriteAllText(_path, content);
     }
 

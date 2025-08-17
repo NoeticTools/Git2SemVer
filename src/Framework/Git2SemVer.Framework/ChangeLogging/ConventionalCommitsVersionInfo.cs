@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.ConventionCommits;
+using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Tools.Git;
 using NoeticTools.Git2SemVer.Framework.Framework.Semver;
 using NoeticTools.Git2SemVer.Framework.Versioning;
@@ -54,12 +55,12 @@ public class ConventionalCommitsVersionInfo
     [JsonConverter(typeof(SemVersionJsonConverter))]
     public SemVersion Version { get; set; } = new(0, 0, 0);
 
-    public void Save(string filePath)
+    public void Save(FilePath filePath)
     {
-        var directory = Path.GetDirectoryName(filePath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+        var directory = filePath.GetDirectory();
+        if (!directory.Exists())
         {
-            Directory.CreateDirectory(directory!);
+            directory.Create();
         }
 
         Git2SemVerJsonSerializer.Write(filePath, this);

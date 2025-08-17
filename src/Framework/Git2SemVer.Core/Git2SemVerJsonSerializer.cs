@@ -55,7 +55,7 @@ public static class Git2SemVerJsonSerializer
         FileMutex.WaitOne(TimeSpan.FromSeconds(10));
         try
         {
-            filePath.WriteAllText(json);
+            filePath.WriteAllText(json, true);
         }
         finally
         {

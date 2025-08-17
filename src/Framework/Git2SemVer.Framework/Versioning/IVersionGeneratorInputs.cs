@@ -178,5 +178,5 @@ public interface IVersionGeneratorInputs : ICommonTaskOptions
     /// <remarks>Default is false.</remarks>
     bool WriteConventionalCommitsInfo { get; }
 
-    bool ValidateScriptInputs(ILogger logger);
+    bool Validate(ILogger logger);
 }

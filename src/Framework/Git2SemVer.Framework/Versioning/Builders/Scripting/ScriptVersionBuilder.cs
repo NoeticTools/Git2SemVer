@@ -6,15 +6,8 @@ using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 
 namespace NoeticTools.Git2SemVer.Framework.Versioning.Builders.Scripting;
 
-public sealed class ScriptVersionBuilder : IVersionBuilder
+public sealed class ScriptVersionBuilder(ILogger logger) : IVersionBuilder
 {
-    private readonly ILogger _logger;
-
-    public ScriptVersionBuilder(ILogger logger)
-    {
-        _logger = logger;
-    }
-
     public void Build(IBuildHost host, IGitTool gitTool, IVersionGeneratorInputs inputs, IVersionOutputs outputs,
                       IMSBuildGlobalProperties msBuildGlobalProperties)
     {
@@ -25,7 +18,7 @@ public sealed class ScriptVersionBuilder : IVersionBuilder
 
         if (inputs.RunScript == false)
         {
-            _logger.LogDebug("User C# script versioning skipped as option not enabled.");
+            logger.LogDebug("User C# script versioning skipped as option not enabled.");
             return;
         }
 
@@ -33,33 +26,33 @@ public sealed class ScriptVersionBuilder : IVersionBuilder
         {
             if (inputs.RunScript == null)
             {
-                _logger.LogDebug($"User C# script '{inputs.BuildScriptPath}' was not found. Ignoring as run script options is not set.");
+                logger.LogDebug($"User C# script '{inputs.BuildScriptPath}' was not found. Ignoring as run script options is not set.");
                 return;
             }
 
             if (inputs.RunScript == true)
             {
-                _logger.LogError($"C# script '{inputs.BuildScriptPath}' was not found and run script options is enabled.");
+                logger.LogError($"C# script '{inputs.BuildScriptPath}' was not found and run script options is enabled.");
                 return;
             }
         }
 
-        if (!inputs.ValidateScriptInputs(_logger))
+        if (!inputs.Validate(logger))
         {
             return;
         }
 
-        _logger.LogDebug("Running user C# script version builder.");
-        using (_logger.EnterLogScope())
+        logger.LogDebug("Running user C# script version builder.");
+        using (logger.EnterLogScope())
         {
-            var context = new VersioningContext(inputs, outputs, host, gitTool, msBuildGlobalProperties, _logger);
-            var scriptRunner = new Git2SemVerScriptRunner(new CSharpScriptRunner(_logger), _logger);
+            var context = new VersioningContext(inputs, outputs, host, gitTool, msBuildGlobalProperties, logger);
+            var scriptRunner = new Git2SemVerScriptRunner(new CSharpScriptRunner(logger), logger);
 
             // ReSharper disable once UnusedVariable
             var task = scriptRunner.RunScript(context, inputs.BuildScriptPath);
-            if (_logger.IsLogging(LoggingLevel.Trace))
+            if (logger.IsLogging(LoggingLevel.Trace))
             {
-                _logger.LogTrace(outputs.GetReport());
+                logger.LogTrace(outputs.GetReport());
             }
         }
     }

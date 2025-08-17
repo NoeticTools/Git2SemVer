@@ -1,4 +1,5 @@
-﻿using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
+﻿using NoeticTools.Git2SemVer.Core.FileSystem;
+using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
 
 
 namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
@@ -19,7 +20,7 @@ public static class ChangelogConstants
 
     public const string DefaultLogLevel = "info";
 
-    public const string DefaultMarkdownTemplateFilename = "changelog.markdown.template.scriban";
+    public static readonly FilePath DefaultMarkdownTemplateFilename = "changelog.markdown.template.scriban";
 
     public const string IssueLinkFormat = "{0}";
 

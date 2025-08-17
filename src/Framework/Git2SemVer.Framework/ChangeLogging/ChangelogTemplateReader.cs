@@ -1,4 +1,6 @@
-﻿using NoeticTools.Git2SemVer.Core.Exceptions;
+﻿using NoeticTools.Git2SemVer.Core;
+using NoeticTools.Git2SemVer.Core.Exceptions;
+using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 
 
@@ -6,33 +8,30 @@ namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
 
 public sealed class ChangelogTemplateReader(ILogger logger)
 {
-    public string Load(string directory)
+    public string Load(DirectoryPath directory)
     {
-        var templatePath = Path.Combine(directory, ChangelogConstants.DefaultMarkdownTemplateFilename);
-        if (File.Exists(templatePath))
+        var templatePath = directory + ChangelogConstants.DefaultMarkdownTemplateFilename;
+        if (templatePath.Exists())
         {
-            return File.ReadAllText(templatePath);
+            return templatePath.ReadAllText();
         }
 
         logger.LogDebug($"Creating default template file: {templatePath}");
-        var defaultTemplate = GetDefaultTemplate();
-        File.WriteAllText(templatePath, defaultTemplate);
+        var defaultTemplate = GetDefaultContent();
+        templatePath.WriteAllText(defaultTemplate);
         return defaultTemplate;
     }
 
-    private static string GetDefaultTemplate()
+    private static string GetDefaultContent()
     {
-        const string resourceFilename = ChangelogConstants.DefaultMarkdownTemplateFilename;
         var assembly = typeof(ChangelogGenerator).Assembly;
         var resourcePath = assembly.GetManifestResourceNames()
-                                   .SingleOrDefault(str => str.EndsWith(resourceFilename))!;
+                                   .SingleOrDefault(path => path.EndsWith(ChangelogConstants.DefaultMarkdownTemplateFilename))!;
         if (resourcePath == null)
         {
-            throw new Git2SemVerOperationException($"The code resource file '{resourceFilename}' is required but not found.");
+            throw new Git2SemVerOperationException($"The code resource file '{ChangelogConstants.DefaultMarkdownTemplateFilename}' is required but not found.");
         }
 
-        using var stream = assembly.GetManifestResourceStream(resourcePath!)!;
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        return assembly.GetResourceFileContent(resourcePath!)!;
     }
 }

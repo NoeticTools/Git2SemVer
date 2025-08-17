@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Diagnostics;
+using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using Semver;
 
@@ -48,7 +49,7 @@ public sealed class LastRunData
         return !priorContributingReleases.All(ver => ContributingReleases.Contains(ver.ToString()));
     }
 
-    public static LastRunData Load(string directory, string filename, ILogger logger)
+    public static LastRunData Load(DirectoryPath directory, FilePath filename, ILogger logger)
     {
         var data = Git2SemVerJsonSerializer.Read<LastRunData>(GetFilePath(directory, filename).FullName);
         if (data.NoData)
@@ -59,7 +60,7 @@ public sealed class LastRunData
         return data;
     }
 
-    public void Save(string directory, string filePath)
+    public void Save(DirectoryPath directory, FilePath filePath)
     {
         Rev = "1";
         var path = GetFilePath(directory, filePath).FullName;
@@ -71,9 +72,9 @@ public sealed class LastRunData
         ContributingReleases = outputs.ContributingReleases.Select(x => x.ToString()).ToReadOnlyList();
     }
 
-    private static DirectoryInfo GetFilePath(string dataDirectory, string targetFilePath)
+    private static FileInfo GetFilePath(DirectoryPath dataDirectory, FilePath targetFilePath)
     {
-        var targetFilename = targetFilePath.Length == 0 ? "no_target" : Path.GetFileName(targetFilePath);
-        return new DirectoryInfo(Path.Combine(dataDirectory, targetFilename + ChangelogConstants.LastRunDataFileSuffix));
+        var targetFilename = targetFilePath.IsEmptyPath ? "no_target" : targetFilePath.FileName;
+        return new FileInfo(Path.Combine(dataDirectory, targetFilename + ChangelogConstants.LastRunDataFileSuffix));
     }
 }

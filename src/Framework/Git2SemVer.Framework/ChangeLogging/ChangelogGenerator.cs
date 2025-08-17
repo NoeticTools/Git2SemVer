@@ -46,7 +46,7 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
         var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions, versioning.Metadata.Contributing);
         var changelog = BuildChangelogContent(conventionalCommitsVersionInfo, scribanTemplate, releaseUrl, releaseAs, lastRunData, changelogToUpdate);
 
-        if (outputFilePath.IsEmpty)
+        if (outputFilePath.IsEmptyPath)
         {
             return changelog;
         }

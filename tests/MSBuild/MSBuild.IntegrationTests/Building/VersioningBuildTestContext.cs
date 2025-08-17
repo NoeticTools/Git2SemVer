@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using NoeticTools.Git2SemVer.Core;
+using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Core.Tools;
 using NoeticTools.Git2SemVer.Core.Tools.DotnetCli;
@@ -104,15 +105,14 @@ internal sealed class VersioningBuildTestContext : IDisposable
 
     private DirectoryInfo TestDirectory { get; }
 
-    private void ExtractResourceToDirectory(string filename, string extractPath)
+    private void ExtractResourceToDirectory(string filename, DirectoryPath extractDirectory)
     {
-        if (Directory.Exists(extractPath))
+        if (extractDirectory.Exists())
         {
-            Directory.Delete(extractPath, true);
-            TestHelper.WaitUntil(() => !Directory.Exists(extractPath));
+            extractDirectory.Delete(true);
         }
 
         using var stream = GetType().Assembly.GetResourceStream(filename);
-        ZipFile.ExtractToDirectory(stream, extractPath);
+        ZipFile.ExtractToDirectory(stream, extractDirectory);
     }
 }

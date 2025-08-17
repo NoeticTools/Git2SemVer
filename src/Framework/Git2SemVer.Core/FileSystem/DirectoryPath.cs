@@ -1,4 +1,5 @@
 ﻿using NoeticTools.Git2SemVer.Core.Exceptions;
+using System.Diagnostics;
 
 
 namespace NoeticTools.Git2SemVer.Core.FileSystem;
@@ -10,20 +11,15 @@ public sealed class DirectoryPath(string path)
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
-    public bool IsEmpty => _path.Length == 0;
+    public bool IsEmptyPath => _path.Length == 0;
 
     public bool Exists()
     {
-        return Directory.Exists(_path);
+        return IsEmptyPath || Directory.Exists(_path);
     }
 
     public void Create()
     {
-        if (IsEmpty)
-        {
-            throw new Git2SemVerArgumentException($"The {nameof(DirectoryPath)} cannot be created because the path is empty.");
-        }
-
         if (Exists())
         {
             return;
@@ -85,5 +81,31 @@ public sealed class DirectoryPath(string path)
     public override string ToString()
     {
         return _path + PreferredDirectoryDelimiter;
+    }
+
+    public void Delete(bool recursive)
+    {
+        if (!Exists())
+        {
+            return;
+        }
+        Directory.Delete(_path, recursive);
+        WaitUntil(() => !Exists());
+    }
+
+    private static bool WaitUntil(Func<bool> predicate)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        while (!predicate())
+        {
+            if (stopwatch.Elapsed > TimeSpan.FromSeconds(30))
+            {
+                return false;
+            }
+
+            Thread.Sleep(5);
+        }
+
+        return true;
     }
 }
