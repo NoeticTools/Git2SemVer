@@ -40,7 +40,8 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
                                                        cmdLineSettings.ReleaseAs,
                                                        cmdLineSettings.DataDirectory,
                                                        cmdLineSettings.OutputFilePath, 
-                                                       Environment.CurrentDirectory);
+                                                       Environment.CurrentDirectory,
+                                                       cmdLineSettings.NoFileWrites ?? false);
 
             if (string.Equals(priorChangelog, changelog, StringComparison.Ordinal))
             {
@@ -56,10 +57,10 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
                 Console.WriteHorizontalLine();
             }
 
-            if (cmdLineSettings.OutputFilePath.Length == 0)
+            if (cmdLineSettings.NoFileWrites ?? false)
             {
                 Console.WriteLine();
-                Console.WriteMarkupDebugLine("Write changelog to file is disabled as the file output path is an empty string.");
+                Console.WriteMarkupDebugLine("Write changelog to files is disabled.");
                 return;
             }
 

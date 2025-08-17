@@ -20,6 +20,7 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
     /// <param name="dataDirectory"></param>
     /// <param name="outputFilePath"></param>
     /// <param name="workingDirectory"></param>
+    /// <param name="noFileWrites"></param>
     /// <returns>
     ///     Created or updated changelog content.
     /// </returns>
@@ -28,7 +29,8 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
                           string releaseAs,
                           DirectoryPath dataDirectory,
                           FilePath outputFilePath,
-                          DirectoryPath workingDirectory)
+                          DirectoryPath workingDirectory, 
+                          bool noFileWrites)
     {
         releaseUrl = GetFirstNonEmptyOption(releaseUrl,
                                             settings.ArtifactLinkPattern,
@@ -43,10 +45,16 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
         var lastRunData = createNewChangelog ? new LastRunData() : LastRunData.Load(dataDirectory, outputFilePath, logger);
         var scribanTemplate = new ChangelogTemplateReader(logger).Load(dataDirectory);
 
-        var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions, versioning.Metadata.Contributing);
-        var changelog = BuildChangelogContent(conventionalCommitsVersionInfo, scribanTemplate, releaseUrl, releaseAs, lastRunData, changelogToUpdate);
+        var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions, 
+                                                                                versioning.Metadata.Contributing);
+        var changelog = BuildChangelogContent(conventionalCommitsVersionInfo, 
+                                              scribanTemplate, 
+                                              releaseUrl, 
+                                              releaseAs, 
+                                              lastRunData, 
+                                              changelogToUpdate);
 
-        if (outputFilePath.IsEmptyPath)
+        if (noFileWrites)
         {
             return changelog;
         }

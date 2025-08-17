@@ -9,8 +9,14 @@ public sealed class FilePath(string path)
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
+    /// <summary>
+    /// True if the path is empty, i.e. it has no components.
+    /// </summary>
     public bool IsEmptyPath => _path.Length == 0;
 
+    /// <summary>
+    /// The filename component of the path.
+    /// </summary>
     public string FileName => Path.GetFileName(_path)
         ?? throw new Git2SemVerArgumentException($"The '{_path}' path does not have a file name component.");
 
@@ -25,7 +31,7 @@ public sealed class FilePath(string path)
 
         var leftPathString = left.ToString();
 
-        if (right is not (DirectoryPath.PreferredDirectoryDelimiter or '\\'))
+        if (right is not (DirectoryPath.PreferredDirectoryDelimiter or DirectoryPath.AlternativeDirectoryDelimiter))
         {
             throw new Git2SemVerArgumentException($"The '{right}' argument must be '\\' or '/' character.");
         }
@@ -45,11 +51,22 @@ public sealed class FilePath(string path)
         return filePath?.ToString() ?? string.Empty;
     }
 
+    /// <summary>
+    /// Reads all text from the file at the specified path.
+    /// </summary>
+    /// <returns>A string containing the entire contents of the file.</returns>
     public string ReadAllText()
     {
         return File.ReadAllText(_path);
     }
 
+    /// <summary>
+    /// Converts the current relative file path to an absolute file path.
+    /// </summary>
+    /// <param name="defaultPath">The default file path to use if the current path is empty.</param>
+    /// <param name="workingDirectory">The working directory to use as the base for resolving relative paths.</param>
+    /// <returns>An absolute <see cref="FilePath"/>. If the current path is empty, the <paramref name="defaultPath"/> is used. If
+    /// the current path is already absolute, it is returned as-is.</returns>
     public FilePath ToAbsolute(FilePath defaultPath, DirectoryPath workingDirectory)
     {
         var filePath = _path.Length > 0 ? new FilePath(_path) : defaultPath;
@@ -66,12 +83,24 @@ public sealed class FilePath(string path)
         return _path;
     }
 
+    /// <summary>
+    /// Get the directory component of the file path.
+    /// </summary>
     public DirectoryPath GetDirectory()
     {
         return Path.GetDirectoryName(_path)
             ?? throw new Git2SemVerArgumentException($"The '{_path}' path does not have a directory component.");
     }
 
+    /// <summary>
+    /// Writes the specified content to a file at the configured path, optionally creating the directory if it does not
+    /// exist.
+    /// </summary>
+    /// <remarks>If <paramref name="createDirectory"/> is <see langword="true"/> and the directory does not
+    /// exist,  it will be created before writing the file. The file is overwritten if it already exists.</remarks>
+    /// <param name="content">The content to write to the file. Cannot be <see langword="null"/>.</param>
+    /// <param name="createDirectory">A value indicating whether to create the directory if it does not exist.  <see langword="true"/> to create the
+    /// directory; otherwise, <see langword="false"/>.</param>
     public void WriteAllText(string content, bool createDirectory = true)
     {
         Git2SemVerArgumentException.ThrowIfNull(content, $"The {nameof(content)} argument must not be null.");
@@ -92,7 +121,7 @@ public sealed class FilePath(string path)
     {
         Git2SemVerArgumentException.ThrowIfNull(path, $"The {nameof(path)} argument must not be null or empty.");
 
-        path = path.Replace('\\', DirectoryPath.PreferredDirectoryDelimiter);
+        path = path.Replace(DirectoryPath.AlternativeDirectoryDelimiter, DirectoryPath.PreferredDirectoryDelimiter);
         if (path.LastOrDefault() == DirectoryPath.PreferredDirectoryDelimiter)
         {
             throw new Git2SemVerArgumentException($"The '{path}' argument must not end with a directory delimiter.");

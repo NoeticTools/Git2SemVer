@@ -43,7 +43,6 @@ public sealed class ChangelogSettings : JsonSettingsFileBase<ChangelogSettings>,
         new(7, "Other", "^(?!dev|Dev|refactor).*$")
     ];
 
-    // todo - this is not a setting but build data
     [JsonPropertyOrder(110)]
     public ConventionalCommitsSettings ConvCommits { get; set; } = new();
 

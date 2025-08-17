@@ -7,10 +7,15 @@ namespace NoeticTools.Git2SemVer.Core.FileSystem;
 public sealed class DirectoryPath(string path)
 {
     public const char PreferredDirectoryDelimiter = '/';
-    private readonly string _path = path.Replace('\\', PreferredDirectoryDelimiter).TrimEnd(PreferredDirectoryDelimiter);
+    public const char AlternativeDirectoryDelimiter = '\\';
+    private readonly string _path = path.Replace(AlternativeDirectoryDelimiter, PreferredDirectoryDelimiter).TrimEnd(PreferredDirectoryDelimiter);
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
+    /// <summary>
+    /// Gets a value indicating whether the path is empty.
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
     public bool IsEmptyPath => _path.Length == 0;
 
     public bool Exists()
@@ -48,7 +53,7 @@ public sealed class DirectoryPath(string path)
         Git2SemVerArgumentException.ThrowIfNull(left, $"The {nameof(left)} argument must not be null.");
         var leftPathString = left.ToString();
         // ReSharper disable once MergeIntoPattern
-        if (right.Length == 1 && right[0] is PreferredDirectoryDelimiter or '\\')
+        if (right.Length == 1 && right[0] is PreferredDirectoryDelimiter or AlternativeDirectoryDelimiter)
         {
             throw new Git2SemVerArgumentException($"The '{right}' argument must be a subdirectory.");
         }

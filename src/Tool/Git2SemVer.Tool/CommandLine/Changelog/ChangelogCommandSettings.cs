@@ -24,9 +24,13 @@ public class ChangelogCommandSettings : CommonCommandSettings
     [Description("Optional the host type. Use for testing expected behaviour on other hosts. Valid values are 'Custom', 'Uncontrolled', 'TeamCity', or 'GitHub'.")]
     public string? HostType { get; set; } = null;
 
+    [CommandOption("--no-writes")]
+    [Description("Optional. Disable file writes. Useful for testing to avoid changing existing Changelog files.")]
+    public bool? NoFileWrites { get; set; }
+
     [CommandOption("-o|--output <FILEPATH>")]
     [DefaultValue(ChangelogConstants.DefaultFilename)]
-    [Description("Generated changelog file path. May be a relative or absolute path. Set to empty string to disable file write.")]
+    [Description("Generated changelog file path. May be a relative or absolute path.")]
     public string OutputFilePath { get; set; } = "";
 
     [CommandOption("-r|--release-as <TITLE>")]
