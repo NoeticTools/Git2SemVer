@@ -1,4 +1,5 @@
 ﻿using NoeticTools.Git2SemVer.Core.FileSystem;
+using System.IO;
 using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
 
 
@@ -7,6 +8,25 @@ namespace NoeticTools.Git2SemVer.Core.Tests.FileSystem;
 [TestFixture]
 public class DirectoryTests
 {
+    [TestCase("folder1")]
+    [TestCase("folder2/")]
+    [TestCase("folder3\\")]
+    public void AddsTrailingDelimiterTest(string folder)
+    {
+        var directory = new Directory(folder);
+
+        Assert.That(directory.ToString().EndsWith('/'), Is.True);
+    }
+
+    [Test]
+    public void AddSubdirectoryTest()
+    {
+        var directory1 = new Directory("folder1");
+        var directory2 = directory1 + "folder2";
+
+        Assert.That(directory2.ToString(), Is.EqualTo("folder1/folder2/"));
+    }
+
     [TestCase("..", false)]
     [TestCase("../", false)]
     [TestCase(".data_directory", false)]

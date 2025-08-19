@@ -1,6 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.ConventionCommits;
+using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
@@ -16,12 +18,6 @@ namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 // ReSharper disable once ClassNeverInstantiated.Global
 public sealed class ChangelogSettings : JsonSettingsFileBase<ChangelogSettings>, IEquatable<ChangelogSettings>, IChangelogSettings
 {
-    /// <summary>
-    ///     Changelog generation enabled flag.
-    /// </summary>
-    [JsonPropertyOrder(-10)]
-    public bool Enabled { get; set; } = true;
-
     /// <summary>
     ///     Optional url to a version's artifacts. May contain version placeholder '%VERSION%'.
     /// </summary>
@@ -50,7 +46,13 @@ public sealed class ChangelogSettings : JsonSettingsFileBase<ChangelogSettings>,
     ///     Path to generator's data and configuration files directory. It may be a relative or absolute path.
     /// </summary>
     [JsonPropertyOrder(20)]
-    public string DataDirectory { get; set; } = ChangelogConstants.DefaultDataDirectory;
+    public Directory DataDirectory { get; set; } = ChangelogConstants.DefaultDataDirectory;
+
+    /// <summary>
+    ///     Changelog generation enabled flag.
+    /// </summary>
+    [JsonPropertyOrder(-10)]
+    public bool Enabled { get; set; } = true;
 
     // ReSharper disable once GrammarMistakeInComment
     /// <summary>
@@ -69,7 +71,7 @@ public sealed class ChangelogSettings : JsonSettingsFileBase<ChangelogSettings>,
     ///     Generated changelog file path. It may be a relative or absolute path. Set to empty string to disable file write.
     /// </summary>
     [JsonPropertyOrder(10)]
-    public string OutputFilePath { get; set; } = ChangelogConstants.DefaultFilename;
+    public File OutputFilePath { get; set; } = ChangelogConstants.DefaultFilename;
 
     /// <summary>
     ///     Configuration file schema revision.

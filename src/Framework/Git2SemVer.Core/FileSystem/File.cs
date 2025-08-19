@@ -1,15 +1,17 @@
 ﻿using NoeticTools.Git2SemVer.Core.Exceptions;
+using System.Text.Json.Serialization;
 
 
 namespace NoeticTools.Git2SemVer.Core.FileSystem;
 
-public sealed class File(string path)
+[JsonConverter(typeof(FileJsonConverter))]
+public sealed class File(string path) : IEquatable<File>
 {
     private readonly string _path = Normalise(path);
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
-    public static File EmptyPath => new File(string.Empty);
+    public static File Null => new File(string.Empty);
 
     /// <summary>
     /// True if the path is empty, i.e. it has no components.
@@ -130,5 +132,30 @@ public sealed class File(string path)
         }
 
         return path;
+    }
+
+    public bool Equals(File? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return _path == other._path;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is File other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return _path.GetHashCode();
     }
 }

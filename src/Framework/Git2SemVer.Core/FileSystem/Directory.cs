@@ -1,27 +1,24 @@
-﻿using NoeticTools.Git2SemVer.Core.Exceptions;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
+using NoeticTools.Git2SemVer.Core.Exceptions;
 
 
 namespace NoeticTools.Git2SemVer.Core.FileSystem;
 
-public sealed class Directory(string path)
+[JsonConverter(typeof(DirectoryJsonConverter))]
+public sealed class Directory(string path) : IEquatable<Directory>
 {
-    public const char PreferredDirectoryDelimiter = '/';
     public const char AlternativeDirectoryDelimiter = '\\';
-    private readonly string _path = path.Replace(AlternativeDirectoryDelimiter, PreferredDirectoryDelimiter).TrimEnd(PreferredDirectoryDelimiter);
+    public const char PreferredDirectoryDelimiter = '/';
+    private readonly string _path = Normalise(path);
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
     /// <summary>
-    /// Gets a value indicating whether the path is empty.
+    ///     Gets a value indicating whether the path is empty.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public bool IsEmptyPath => _path.Length == 0;
-
-    public bool Exists()
-    {
-        return IsEmptyPath || System.IO.Directory.Exists(_path);
-    }
 
     public void Create()
     {
@@ -29,7 +26,35 @@ public sealed class Directory(string path)
         {
             return;
         }
+
         System.IO.Directory.CreateDirectory(_path);
+    }
+
+    public void Delete(bool recursive)
+    {
+        if (!Exists())
+        {
+            return;
+        }
+
+        System.IO.Directory.Delete(_path, recursive);
+        WaitUntil(() => !Exists());
+    }
+
+    public bool Exists()
+    {
+        return IsEmptyPath || System.IO.Directory.Exists(_path);
+    }
+
+    public IReadOnlyList<File> GetFiles(string pattern, bool recursive)
+    {
+        if (!Exists())
+        {
+            return [];
+        }
+
+        var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+        return System.IO.Directory.GetFiles(_path, pattern, searchOption).Select(x => new File(x)).ToList();
     }
 
     public static File operator +(Directory left, File right)
@@ -51,14 +76,13 @@ public sealed class Directory(string path)
     public static Directory operator +(Directory left, string right)
     {
         Git2SemVerArgumentException.ThrowIfNull(left, $"The {nameof(left)} argument must not be null.");
-        var leftPathString = left.ToString();
         // ReSharper disable once MergeIntoPattern
         if (right.Length == 1 && right[0] is PreferredDirectoryDelimiter or AlternativeDirectoryDelimiter)
         {
             throw new Git2SemVerArgumentException($"The '{right}' argument must be a subdirectory.");
         }
 
-        return new Directory(leftPathString);
+        return new Directory(Path.Combine(left, right));
     }
 
     public static implicit operator Directory(string path)
@@ -85,17 +109,18 @@ public sealed class Directory(string path)
 
     public override string ToString()
     {
-        return _path + PreferredDirectoryDelimiter;
+        return _path;
     }
 
-    public void Delete(bool recursive)
+    private static string Normalise(string path)
     {
-        if (!Exists())
+        path = path.Replace(AlternativeDirectoryDelimiter, PreferredDirectoryDelimiter);
+        if (path.Length > 0 && path.Last() != PreferredDirectoryDelimiter)
         {
-            return;
+            path += PreferredDirectoryDelimiter;
         }
-        System.IO.Directory.Delete(_path, recursive);
-        WaitUntil(() => !Exists());
+
+        return path;
     }
 
     private static bool WaitUntil(Func<bool> predicate)
@@ -114,13 +139,28 @@ public sealed class Directory(string path)
         return true;
     }
 
-    public IReadOnlyList<File> GetFiles(string pattern, bool recursive)
+    public bool Equals(Directory? other)
     {
-        if (!Exists())
+        if (other is null)
         {
-            return [];
+            return false;
         }
-        var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        return System.IO.Directory.GetFiles(_path, pattern, searchOption).Select(x => new File(x)).ToList();
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return _path == other._path;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is Directory other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return _path.GetHashCode();
     }
 }

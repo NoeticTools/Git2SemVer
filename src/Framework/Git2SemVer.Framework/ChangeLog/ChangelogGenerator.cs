@@ -46,7 +46,7 @@ public class ChangelogGenerator(ILogger logger)
                                             settings.ArtifactLinkPattern,
                                             ChangelogConstants.DefaultArtifactLinkPattern);
 
-        outputFilePathOption ??= File.EmptyPath;
+        outputFilePathOption ??= File.Null;
         outputFilePathOption = outputFilePathOption.ToAbsolute(settings.OutputFilePath, workingDirectory);
         var createNewChangelog = !outputFilePathOption.Exists();
         var changelogToUpdate = createNewChangelog ? "" : outputFilePathOption.ReadAllText();

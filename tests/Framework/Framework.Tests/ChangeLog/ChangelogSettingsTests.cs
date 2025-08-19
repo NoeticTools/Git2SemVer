@@ -11,7 +11,7 @@ public class ChangelogSettingsTests
     {
         var original = new ChangelogSettings
         {
-            DataDirectory = "data_directory",
+            DataDirectory = "data_directory/",
             OutputFilePath = "output/path",
             ArtifactLinkPattern = "http://some_url.domain/%VERSION%",
             ConvCommits =
@@ -47,7 +47,7 @@ public class ChangelogSettingsTests
                                        "Rev": "1",
                                        "Enabled": true,
                                        "OutputFilePath": "CHANGELOG.md",
-                                       "DataDirectory": ".git2semver",
+                                       "DataDirectory": ".git2semver/",
                                        "ArtifactLinkPattern": "",
                                        "IssueLinkFormat": "{0}",
                                        "ConvCommits": {
