@@ -1,7 +1,6 @@
 ﻿using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using NoeticTools.Git2SemVer.Core.Logging;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging.Task;
 using NoeticTools.Git2SemVer.Framework.Framework.Config;
 using NoeticTools.Git2SemVer.Framework.Versioning;
 using NoeticTools.Git2SemVer.Framework.Versioning.Builders.Scripting;
@@ -28,6 +27,7 @@ internal sealed class Services
         services.AddSingleton(_ => Git2SemVerLocalSettings.Load());
         services.AddSingleton(_ => new MSBuildTeamCityWriterFactory(taskLogging).Create());
 
+        services.AddNoeticToolsGit2SemVerMSBuild();
         services.AddNoeticToolsGit2SemVerCore();
         services.AddNoeticToolsGit2SemVerFramework();
 

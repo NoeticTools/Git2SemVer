@@ -104,11 +104,7 @@
                                    RunScript="$(Git2SemVer_RunScript)"
                                    ReleaseTagFormat="$(Git2SemVer_ReleaseTagFormat)"
                                    WriteConventionalCommitsInfo="$(Git2SemVer_WriteConventionalCommitsInfo)"
-                                   ChangelogEnable="$(Git2SemVer_ChangelogEnable)"
-                                   ChangelogArtifactLinkPattern="$(Git2SemVer_ChangelogArtifactLinkPattern)"
-                                   ChangelogDataDirectory="$(Git2SemVer_ChangelogDataDirectory)"
-                                   ChangelogOutputFilePath="$(Git2SemVer_ChangelogOutputFilePath)"
-                                   ChangelogReleaseAs="$(Git2SemVer_ChangelogReleaseAs)">
+                                   ChangelogDataDirectory="$(Git2SemVer_ChangelogDataDirectory)">
 
       <Output TaskParameter="AssemblyVersion" PropertyName="Git2SemVer_AssemblyVersion" />
       <Output TaskParameter="FileVersion" PropertyName="Git2SemVer_FileVersion" />

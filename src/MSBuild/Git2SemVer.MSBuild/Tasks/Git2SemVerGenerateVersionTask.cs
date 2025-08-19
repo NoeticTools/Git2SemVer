@@ -6,12 +6,12 @@ using NoeticTools.Git2SemVer.Core.Diagnostics;
 using NoeticTools.Git2SemVer.Core.Exceptions;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging.Task;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Versioning;
 using ILogger = NoeticTools.Git2SemVer.Core.Logging.ILogger;
 
 
+// ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
@@ -27,7 +27,6 @@ namespace NoeticTools.Git2SemVer.MSBuild.Tasks;
 ///         This class exposed properties for inputs from the MSBuild environment and outputs to the environment.
 ///     </para>
 /// </remarks>
-// ReSharper disable once UnusedType.Global
 [ExcludeFromCodeCoverage]
 public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGeneratorInputs, IChangeLogGeneratorTaskOptions
 {
@@ -119,33 +118,10 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
     public string BuildScriptPath { get; set; } = "";
 
     /// <summary>
-    ///     Optional changelog url to a version's artifacts. May contain version placeholder '%VERSION%'.
-    /// </summary>
-    public string ChangelogArtifactLinkPattern { get; set; } = "";
-
-    /// <summary>
     ///     Optional path to changelog generator's data and configuration files directory. It may be a relative or absolute
     ///     path.
     /// </summary>
     public string ChangelogDataDirectory { get; set; } = "";
-
-    /// <summary>
-    ///     Optional changelog generation/update enable.
-    /// </summary>
-    [Required]
-    public bool ChangelogEnable { get; set; }
-
-    /// <summary>
-    ///     Optional generated changelog file path. It may be a relative (to given working directory) or absolute path. Set to
-    ///     empty string to disable file write.
-    /// </summary>
-    public string ChangelogOutputFilePath { get; set; } = "";
-
-    /// <summary>
-    ///     If not an empty string, sets the changelog's changes version (normally version or 'Unreleased'). Any text
-    ///     permitted.
-    /// </summary>
-    public string ChangelogReleaseAs { get; set; } = "";
 
     /// <summary>
     ///     Optional input MSBuild <c>Git2SemVer_HostType</c> property.
@@ -359,11 +335,6 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
 
             var versioningOutputs = projectVersioning.Run(versioningMode);
             SetOutputs(versioningOutputs.Versions);
-
-            if (!ChangelogEnable)
-            {
-                return !Log.HasLoggedErrors;
-            }
 
             servicesProvider.GetService<ChangelogGeneratorTask>()!.Execute(versioningOutputs);
             return !Log.HasLoggedErrors;

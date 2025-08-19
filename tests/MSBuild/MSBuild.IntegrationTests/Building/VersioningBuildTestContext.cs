@@ -1,10 +1,12 @@
 using System.IO.Compression;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Core.Tools;
 using NoeticTools.Git2SemVer.Core.Tools.DotnetCli;
 using NoeticTools.Git2SemVer.Testing.Core;
+using NUnit.Framework.Interfaces;
 
 
 #pragma warning disable NUnit2045
@@ -79,6 +81,21 @@ internal sealed class VersioningBuildTestContext : IDisposable
 
     public void Dispose()
     {
+        if (NUnit.Framework.TestContext.CurrentContext.Result.Outcome == ResultState.Failure)
+        {
+            Logger.LogInfo("Test failed. Dumping log files from {0}:\n", TestDirectory.FullName);
+
+            var workingDirectory = new DirectoryPath(TestDirectory.FullName);
+            var logFiles = workingDirectory.GetFiles(pattern: "*.log", recursive: true);
+
+            foreach (var logFile in logFiles)
+            {
+                Logger.LogInfo("Log file: {0}", logFile);
+                var content = File.ReadAllText(logFile);
+                Logger.LogInfo(content + "\n");
+            }
+        }
+
         _activeContexts--;
         _testDirectoryResource.Dispose();
     }

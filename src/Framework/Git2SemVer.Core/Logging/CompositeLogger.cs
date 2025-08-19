@@ -111,6 +111,10 @@ public sealed class CompositeLogger : ILogger
     public void LogError(Exception exception)
     {
         var message = $"Exception - {exception.Message}\nStack trace: {exception.StackTrace}";
+        if (exception.InnerException != null)
+        {
+            message += $"\nInner exception: {exception.InnerException.Message}";
+        }
         _errorMessages.Add(message);
         _loggers.ForEach(logger => logger.LogError(exception));
     }

@@ -113,4 +113,14 @@ public sealed class DirectoryPath(string path)
 
         return true;
     }
+
+    public IReadOnlyList<FilePath> GetFiles(string pattern, bool recursive)
+    {
+        if (!Exists())
+        {
+            return [];
+        }
+        var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+        return Directory.GetFiles(_path, pattern, searchOption).Select(x => new FilePath(x)).ToList();
+    }
 }

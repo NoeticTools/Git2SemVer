@@ -31,17 +31,13 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
 
             var createNewChangelog = !File.Exists(cmdLineSettings.OutputFilePath);
             var priorChangelog = createNewChangelog ? "" : File.ReadAllText(cmdLineSettings.OutputFilePath);
-            var projectSettings = ChangelogSettings.Load(cmdLineSettings.DataDirectory, ChangelogConstants.ProjectSettingsFilename);
-            var versioningResult = RunVersionGenerator(cmdLineSettings, projectSettings.ConvCommits);
+            var changelogSettings = ChangelogSettings.Load(cmdLineSettings.DataDirectory, ChangelogConstants.ProjectSettingsFilename);
+            var versioningResult = RunVersionGenerator(cmdLineSettings, changelogSettings.ConvCommits); // todo - move ConvCommits to its own file
 
-            var changelogGenerator = new ChangelogGenerator(projectSettings, logger);
+            var changelogGenerator = new ChangelogGenerator(logger);
             var changelog = changelogGenerator.Execute(versioningResult,
-                                                       cmdLineSettings.ArtifactLinkPattern,
-                                                       cmdLineSettings.ReleaseAs,
-                                                       cmdLineSettings.DataDirectory,
-                                                       cmdLineSettings.OutputFilePath, 
-                                                       Environment.CurrentDirectory,
-                                                       cmdLineSettings.NoFileWrites ?? false);
+                                                       cmdLineSettings.DataDirectory, 
+                                                       Environment.CurrentDirectory, cmdLineSettings.NoFileWrites ?? false, cmdLineSettings.ArtifactLinkPattern, cmdLineSettings.OutputFilePath, cmdLineSettings.ReleaseAs);
 
             if (string.Equals(priorChangelog, changelog, StringComparison.Ordinal))
             {

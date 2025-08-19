@@ -9,50 +9,58 @@ using Semver;
 namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 [RegisterTransient]
-public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
+public class ChangelogGenerator(ILogger logger)
 {
     /// <summary>
     ///     Generate or update changelog document.
     /// </summary>
-    /// <param name="versioning"></param>
-    /// <param name="releaseUrl"></param>
-    /// <param name="releaseAs"></param>
-    /// <param name="dataDirectory"></param>
-    /// <param name="outputFilePath"></param>
+    /// <param name="versioning">Versioning information for the changelog generator to use.</param>
+    /// <param name="dataDirectoryOption"></param>
     /// <param name="workingDirectory"></param>
     /// <param name="noFileWrites"></param>
+    /// <param name="releaseUrlOption"></param>
+    /// <param name="outputFilePathOption"></param>
+    /// <param name="releaseAs"></param>
     /// <returns>
     ///     Created or updated changelog content.
     /// </returns>
     public string Execute(VersioningOutputs versioning,
-                          string releaseUrl,
-                          string releaseAs,
-                          DirectoryPath dataDirectory,
-                          FilePath outputFilePath,
-                          DirectoryPath workingDirectory, 
-                          bool noFileWrites)
+                          DirectoryPath dataDirectoryOption,
+                          DirectoryPath workingDirectory,
+                          bool noFileWrites,
+                          string releaseUrlOption = "",
+                          FilePath? outputFilePathOption = null,
+                          string releaseAs = "")
     {
-        releaseUrl = GetFirstNonEmptyOption(releaseUrl,
+        var dataDirectory = dataDirectoryOption.ToAbsolute(ChangelogConstants.DefaultDataDirectory, workingDirectory);
+        var settings = ChangelogSettings.Load(dataDirectory, ChangelogConstants.ProjectSettingsFilename);
+        if (!settings.Enabled)
+        {
+            logger.LogDebug("Changelog generation skipped as it is not enabled in the settings.");
+            return "";
+        }
+
+        releaseUrlOption = GetFirstNonEmptyOption(releaseUrlOption,
                                             settings.ArtifactLinkPattern,
                                             ChangelogConstants.DefaultArtifactLinkPattern);
 
-        dataDirectory = dataDirectory.ToAbsolute(settings.DataDirectory, workingDirectory);
-        outputFilePath = outputFilePath.ToAbsolute(settings.OutputFilePath, workingDirectory);
+        outputFilePathOption ??= FilePath.EmptyPath;
+        outputFilePathOption = outputFilePathOption.ToAbsolute(settings.OutputFilePath, workingDirectory);
+        var createNewChangelog = !outputFilePathOption.Exists();
+        var changelogToUpdate = createNewChangelog ? "" : outputFilePathOption.ReadAllText();
 
-        var createNewChangelog = !outputFilePath.Exists();
-        var changelogToUpdate = createNewChangelog ? "" : outputFilePath.ReadAllText();
-
-        var lastRunData = createNewChangelog ? new LastRunData() : LastRunData.Load(dataDirectory, outputFilePath, logger);
+        var lastRunData = createNewChangelog ? new LastRunData() : LastRunData.Load(dataDirectory, outputFilePathOption, logger);
         var scribanTemplate = new ChangelogTemplateReader(logger).Load(dataDirectory);
 
         var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions, 
                                                                                 versioning.Metadata.Contributing);
         var changelog = BuildChangelogContent(conventionalCommitsVersionInfo, 
                                               scribanTemplate, 
-                                              releaseUrl, 
+                                              releaseUrlOption, 
                                               releaseAs, 
                                               lastRunData, 
-                                              changelogToUpdate);
+                                              changelogToUpdate,
+                                              settings);
 
         if (noFileWrites)
         {
@@ -61,9 +69,9 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
 
         lastRunData.Update(conventionalCommitsVersionInfo);
         lastRunData.ForcedReleasedTitle = releaseAs;
-        lastRunData.Save(dataDirectory, outputFilePath);
+        lastRunData.Save(dataDirectory, outputFilePathOption);
 
-        outputFilePath.WriteAllText(changelog);
+        outputFilePathOption.WriteAllText(changelog);
 
         return changelog;
     }
@@ -73,7 +81,8 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
                                          string releaseUrl,
                                          string releaseAs,
                                          LastRunData lastRunData,
-                                         string changelogToUpdate)
+                                         string changelogToUpdate, 
+                                         ChangelogSettings settings)
     {
         var contributingReleases = convCommits.ContributingReleases.Select(x => SemVersion.Parse(x, SemVersionStyles.Strict)).ToArray();
         var addNewRelease = lastRunData.ContributingReleasesChanged(contributingReleases);
@@ -201,20 +210,5 @@ public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)
         }
 
         return newChangesContent;
-    }
-
-    private static string ToAbsolutePath(string path, string defaultPath, string workingDirectory)
-    {
-        if (path.Length == 0)
-        {
-            path = defaultPath;
-        }
-
-        if (defaultPath.Length > 0 && Path.IsPathRooted(path)) // todo - check if this is correct
-        {
-            return path;
-        }
-
-        return Path.Combine(workingDirectory, path);
     }
 }

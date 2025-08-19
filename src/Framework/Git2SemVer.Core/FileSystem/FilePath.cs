@@ -9,6 +9,8 @@ public sealed class FilePath(string path)
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
+    public static FilePath EmptyPath => new FilePath(string.Empty);
+
     /// <summary>
     /// True if the path is empty, i.e. it has no components.
     /// </summary>
