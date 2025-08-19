@@ -7,6 +7,8 @@ using NoeticTools.Git2SemVer.Core.Tools;
 using NoeticTools.Git2SemVer.Core.Tools.DotnetCli;
 using NoeticTools.Git2SemVer.Testing.Core;
 using NUnit.Framework.Interfaces;
+using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+using File = System.IO.File;
 
 
 #pragma warning disable NUnit2045
@@ -37,7 +39,7 @@ internal sealed class VersioningBuildTestContext : IDisposable
         var processCli = new ProcessCli(Logger) { WorkingDirectory = TestDirectory.FullName };
         DotNetCli = new DotNetTool(processCli);
 
-        var currentDirectory = Directory.GetCurrentDirectory();
+        var currentDirectory = System.IO.Directory.GetCurrentDirectory();
         BuildConfiguration = new DirectoryInfo(currentDirectory).Parent!.Name;
 
         TestSolutionDirectory = Path.Combine(TestDirectory.FullName, solutionFolderName);
@@ -85,7 +87,7 @@ internal sealed class VersioningBuildTestContext : IDisposable
         {
             Logger.LogInfo("Test failed. Dumping log files from {0}:\n", TestDirectory.FullName);
 
-            var workingDirectory = new DirectoryPath(TestDirectory.FullName);
+            var workingDirectory = new Directory(TestDirectory.FullName);
             var logFiles = workingDirectory.GetFiles(pattern: "*.log", recursive: true);
 
             foreach (var logFile in logFiles)
@@ -122,7 +124,7 @@ internal sealed class VersioningBuildTestContext : IDisposable
 
     private DirectoryInfo TestDirectory { get; }
 
-    private void ExtractResourceToDirectory(string filename, DirectoryPath extractDirectory)
+    private void ExtractResourceToDirectory(string filename, Directory extractDirectory)
     {
         if (extractDirectory.Exists())
         {

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Unicode;
 using NoeticTools.Git2SemVer.Core.FileSystem;
+using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
 namespace NoeticTools.Git2SemVer.Core;
@@ -17,14 +18,14 @@ public static class Git2SemVerJsonSerializer
         Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
     };
 
-    public static T Read<T>(FilePath filePath) where T : new()
+    public static T Read<T>(File file) where T : new()
     {
         FileMutex.WaitOne(TimeSpan.FromSeconds(10));
         try
         {
-            if (filePath.Exists())
+            if (file.Exists())
             {
-                var json = filePath.ReadAllText();
+                var json = file.ReadAllText();
                 return JsonSerializer.Deserialize<T>(json)!;
             }
             else
@@ -48,14 +49,14 @@ public static class Git2SemVerJsonSerializer
         return JsonSerializer.Serialize(target, SerialiseOptions);
     }
 
-    public static void Write(FilePath filePath, object target)
+    public static void Write(File file, object target)
     {
         var json = Serialise(target);
 
         FileMutex.WaitOne(TimeSpan.FromSeconds(10));
         try
         {
-            filePath.WriteAllText(json, true);
+            file.WriteAllText(json, true);
         }
         finally
         {

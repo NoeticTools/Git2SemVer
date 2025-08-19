@@ -3,13 +3,13 @@
 
 namespace NoeticTools.Git2SemVer.Core.FileSystem;
 
-public sealed class FilePath(string path)
+public sealed class File(string path)
 {
     private readonly string _path = Normalise(path);
 
     public bool IsAbsolute => _path.Length > 0 && Path.IsPathRooted(_path);
 
-    public static FilePath EmptyPath => new FilePath(string.Empty);
+    public static File EmptyPath => new File(string.Empty);
 
     /// <summary>
     /// True if the path is empty, i.e. it has no components.
@@ -24,33 +24,33 @@ public sealed class FilePath(string path)
 
     public bool Exists()
     {
-        return File.Exists(_path);
+        return System.IO.File.Exists(_path);
     }
 
-    public static DirectoryPath operator +(FilePath left, char right)
+    public static Directory operator +(File left, char right)
     {
         Git2SemVerArgumentException.ThrowIfNull(left, $"The {nameof(left)} argument must not be null.");
 
         var leftPathString = left.ToString();
 
-        if (right is not (DirectoryPath.PreferredDirectoryDelimiter or DirectoryPath.AlternativeDirectoryDelimiter))
+        if (right is not (Directory.PreferredDirectoryDelimiter or Directory.AlternativeDirectoryDelimiter))
         {
             throw new Git2SemVerArgumentException($"The '{right}' argument must be '\\' or '/' character.");
         }
 
-        return new DirectoryPath(leftPathString);
+        return new Directory(leftPathString);
     }
 
-    public static implicit operator FilePath(string path)
+    public static implicit operator File(string path)
     {
         Git2SemVerArgumentException.ThrowIfNull(path, $"The {nameof(path)} argument must be a non-empty string.");
 
-        return new FilePath(path);
+        return new File(path);
     }
 
-    public static implicit operator string(FilePath filePath)
+    public static implicit operator string(File file)
     {
-        return filePath?.ToString() ?? string.Empty;
+        return file?.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public sealed class FilePath(string path)
     /// <returns>A string containing the entire contents of the file.</returns>
     public string ReadAllText()
     {
-        return File.ReadAllText(_path);
+        return System.IO.File.ReadAllText(_path);
     }
 
     /// <summary>
@@ -67,17 +67,17 @@ public sealed class FilePath(string path)
     /// </summary>
     /// <param name="defaultPath">The default file path to use if the current path is empty.</param>
     /// <param name="workingDirectory">The working directory to use as the base for resolving relative paths.</param>
-    /// <returns>An absolute <see cref="FilePath"/>. If the current path is empty, the <paramref name="defaultPath"/> is used. If
+    /// <returns>An absolute <see cref="File"/>. If the current path is empty, the <paramref name="defaultPath"/> is used. If
     /// the current path is already absolute, it is returned as-is.</returns>
-    public FilePath ToAbsolute(FilePath defaultPath, DirectoryPath workingDirectory)
+    public File ToAbsolute(File defaultPath, Directory workingDirectory)
     {
-        var filePath = _path.Length > 0 ? new FilePath(_path) : defaultPath;
+        var filePath = _path.Length > 0 ? new File(_path) : defaultPath;
         if (filePath.IsAbsolute)
         {
             return filePath;
         }
 
-        return workingDirectory + new FilePath(filePath);
+        return workingDirectory + new File(filePath);
     }
 
     public override string ToString()
@@ -88,7 +88,7 @@ public sealed class FilePath(string path)
     /// <summary>
     /// Get the directory component of the file path.
     /// </summary>
-    public DirectoryPath GetDirectory()
+    public Directory GetDirectory()
     {
         return Path.GetDirectoryName(_path)
             ?? throw new Git2SemVerArgumentException($"The '{_path}' path does not have a directory component.");
@@ -116,15 +116,15 @@ public sealed class FilePath(string path)
             }
         }
 
-        File.WriteAllText(_path, content);
+        System.IO.File.WriteAllText(_path, content);
     }
 
     private static string Normalise(string path)
     {
         Git2SemVerArgumentException.ThrowIfNull(path, $"The {nameof(path)} argument must not be null or empty.");
 
-        path = path.Replace(DirectoryPath.AlternativeDirectoryDelimiter, DirectoryPath.PreferredDirectoryDelimiter);
-        if (path.LastOrDefault() == DirectoryPath.PreferredDirectoryDelimiter)
+        path = path.Replace(Directory.AlternativeDirectoryDelimiter, Directory.PreferredDirectoryDelimiter);
+        if (path.LastOrDefault() == Directory.PreferredDirectoryDelimiter)
         {
             throw new Git2SemVerArgumentException($"The '{path}' argument must not end with a directory delimiter.");
         }

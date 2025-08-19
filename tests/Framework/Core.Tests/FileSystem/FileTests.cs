@@ -1,20 +1,22 @@
 ﻿using NoeticTools.Git2SemVer.Core.FileSystem;
+using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
 namespace NoeticTools.Git2SemVer.Core.Tests.FileSystem;
 
 [TestFixture]
-public class FilePathTests
+public class FileTests
 {
-    [TestCase(DirectoryPath.PreferredDirectoryDelimiter)]
+    [TestCase(Directory.PreferredDirectoryDelimiter)]
     [TestCase('\\')]
     public void AddDirectoryDelimiterTest(char delimiter)
     {
-        var filePath = new FilePath("/test/dir");
+        var filePath = new File("/test/dir");
 
         var result = filePath + delimiter;
 
-        Assert.That(result, Is.TypeOf<DirectoryPath>());
+        Assert.That(result, Is.TypeOf<Directory>());
         Assert.That(result.ToString(), Is.EqualTo("/test/dir/"));
     }
 
@@ -22,7 +24,7 @@ public class FilePathTests
     public void AddStringReturnsStringTest()
     {
         // ReSharper disable once StringLiteralTypo
-        var filePath = new FilePath("/test/dir") + "ectory";
+        var filePath = new File("/test/dir") + "ectory";
 
         Assert.That(filePath, Is.TypeOf<string>());
         Assert.That(filePath, Is.EqualTo("/test/directory"));
@@ -31,7 +33,7 @@ public class FilePathTests
     [Test]
     public void FilenameTest()
     {
-        var filePath = new FilePath("/test/dir/file.txt");
+        var filePath = new File("/test/dir/file.txt");
 
         var result = filePath.FileName;
 
@@ -46,7 +48,7 @@ public class FilePathTests
     [TestCase("/.data_directory/file.txt", true)]
     public void IsAbsoluteTest(string path, bool expected)
     {
-        var filePath = new FilePath(path);
+        var filePath = new File(path);
         Assert.That(filePath.IsAbsolute, Is.EqualTo(expected));
     }
 
@@ -55,7 +57,7 @@ public class FilePathTests
     [TestCase("/a", false)]
     public void IsEmptyTest(string input, bool expected)
     {
-        var filePath = new FilePath(input);
+        var filePath = new File(input);
 
         var result = filePath.IsEmptyPath;
 
@@ -65,7 +67,7 @@ public class FilePathTests
     [Test]
     public void ToAbsolute_DoesNotExpandRootedDefaultPathsTest()
     {
-        var filePath = new FilePath("");
+        var filePath = new File("");
 
         var result = filePath.ToAbsolute("/default_path/file", "/working_directory");
 
@@ -77,7 +79,7 @@ public class FilePathTests
     [TestCase("/.data_directory/file.txt")]
     public void ToAbsolute_DoesNotExpandRootedPathsTest(string path)
     {
-        var filePath = new FilePath(path);
+        var filePath = new File(path);
 
         var result = filePath.ToAbsolute("default_path/file", "/working_directory");
 
@@ -87,7 +89,7 @@ public class FilePathTests
     [Test]
     public void ToAbsolute_ExpandsNonRootedDefaultPathTest()
     {
-        var filePath = new FilePath("");
+        var filePath = new File("");
 
         var result = filePath.ToAbsolute("default_path/file", "/working_directory");
 
@@ -99,7 +101,7 @@ public class FilePathTests
     [TestCase(".data_directory/file.txt", "/working_directory/.data_directory/file.txt")]
     public void ToAbsolute_ExpandsNonRootedPathsTest(string path, string expected)
     {
-        var filePath = new FilePath(path);
+        var filePath = new File(path);
 
         var result = filePath.ToAbsolute("default_path/file", "/working_directory");
 

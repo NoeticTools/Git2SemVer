@@ -7,6 +7,7 @@ using NoeticTools.Git2SemVer.Framework.Framework.Semver;
 using NoeticTools.Git2SemVer.Framework.Versioning;
 using NoeticTools.Git2SemVer.Framework.Versioning.GitHistoryWalking;
 using Semver;
+using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
 namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
@@ -55,15 +56,15 @@ public class ConventionalCommitsVersionInfo
     [JsonConverter(typeof(SemVersionJsonConverter))]
     public SemVersion Version { get; set; } = new(0, 0, 0);
 
-    public void Save(FilePath filePath)
+    public void Save(File file)
     {
-        var directory = filePath.GetDirectory();
+        var directory = file.GetDirectory();
         if (!directory.Exists())
         {
             directory.Create();
         }
 
-        Git2SemVerJsonSerializer.Write(filePath, this);
+        Git2SemVerJsonSerializer.Write(file, this);
     }
 
     private static bool HasConventionalCommitInfo(Commit x)

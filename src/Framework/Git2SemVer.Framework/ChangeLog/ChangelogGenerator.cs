@@ -4,6 +4,8 @@ using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework.ChangeLog.Exceptions;
 using Scriban;
 using Semver;
+using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
 namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
@@ -25,11 +27,11 @@ public class ChangelogGenerator(ILogger logger)
     ///     Created or updated changelog content.
     /// </returns>
     public string Execute(VersioningOutputs versioning,
-                          DirectoryPath dataDirectoryOption,
-                          DirectoryPath workingDirectory,
+                          Directory dataDirectoryOption,
+                          Directory workingDirectory,
                           bool noFileWrites,
                           string releaseUrlOption = "",
-                          FilePath? outputFilePathOption = null,
+                          File? outputFilePathOption = null,
                           string releaseAs = "")
     {
         var dataDirectory = dataDirectoryOption.ToAbsolute(ChangelogConstants.DefaultDataDirectory, workingDirectory);
@@ -44,7 +46,7 @@ public class ChangelogGenerator(ILogger logger)
                                             settings.ArtifactLinkPattern,
                                             ChangelogConstants.DefaultArtifactLinkPattern);
 
-        outputFilePathOption ??= FilePath.EmptyPath;
+        outputFilePathOption ??= File.EmptyPath;
         outputFilePathOption = outputFilePathOption.ToAbsolute(settings.OutputFilePath, workingDirectory);
         var createNewChangelog = !outputFilePathOption.Exists();
         var changelogToUpdate = createNewChangelog ? "" : outputFilePathOption.ReadAllText();

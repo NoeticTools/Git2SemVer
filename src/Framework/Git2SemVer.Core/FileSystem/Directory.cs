@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace NoeticTools.Git2SemVer.Core.FileSystem;
 
-public sealed class DirectoryPath(string path)
+public sealed class Directory(string path)
 {
     public const char PreferredDirectoryDelimiter = '/';
     public const char AlternativeDirectoryDelimiter = '\\';
@@ -20,7 +20,7 @@ public sealed class DirectoryPath(string path)
 
     public bool Exists()
     {
-        return IsEmptyPath || Directory.Exists(_path);
+        return IsEmptyPath || System.IO.Directory.Exists(_path);
     }
 
     public void Create()
@@ -29,26 +29,26 @@ public sealed class DirectoryPath(string path)
         {
             return;
         }
-        Directory.CreateDirectory(_path);
+        System.IO.Directory.CreateDirectory(_path);
     }
 
-    public static FilePath operator +(DirectoryPath left, FilePath right)
+    public static File operator +(Directory left, File right)
     {
-        return right.IsAbsolute ? new FilePath(right.ToString()) : new FilePath(left.ToString() + right);
+        return right.IsAbsolute ? new File(right.ToString()) : new File(left.ToString() + right);
     }
 
     /// <summary>
     ///     Append subdirectory to the directory path.
     /// </summary>
-    public static DirectoryPath operator +(DirectoryPath left, DirectoryPath right)
+    public static Directory operator +(Directory left, Directory right)
     {
-        return right.IsAbsolute ? new DirectoryPath(right.ToString()) : new DirectoryPath(left.ToString() + right.ToString());
+        return right.IsAbsolute ? new Directory(right.ToString()) : new Directory(left.ToString() + right.ToString());
     }
 
     /// <summary>
     ///     Append subdirectory to the directory path.
     /// </summary>
-    public static DirectoryPath operator +(DirectoryPath left, string right)
+    public static Directory operator +(Directory left, string right)
     {
         Git2SemVerArgumentException.ThrowIfNull(left, $"The {nameof(left)} argument must not be null.");
         var leftPathString = left.ToString();
@@ -58,23 +58,23 @@ public sealed class DirectoryPath(string path)
             throw new Git2SemVerArgumentException($"The '{right}' argument must be a subdirectory.");
         }
 
-        return new DirectoryPath(leftPathString);
+        return new Directory(leftPathString);
     }
 
-    public static implicit operator DirectoryPath(string path)
+    public static implicit operator Directory(string path)
     {
         Git2SemVerArgumentException.ThrowIfNull(path, $"The {nameof(path)} argument must be a non-empty string.");
-        return new DirectoryPath(path);
+        return new Directory(path);
     }
 
-    public static implicit operator string(DirectoryPath directoryPath)
+    public static implicit operator string(Directory directory)
     {
-        return directoryPath?.ToString() ?? string.Empty;
+        return directory?.ToString() ?? string.Empty;
     }
 
-    public DirectoryPath ToAbsolute(DirectoryPath defaultPath, DirectoryPath workingDirectory)
+    public Directory ToAbsolute(Directory defaultPath, Directory workingDirectory)
     {
-        var directoryPath = _path.Length > 0 ? new DirectoryPath(_path) : defaultPath;
+        var directoryPath = _path.Length > 0 ? new Directory(_path) : defaultPath;
         if (defaultPath.IsAbsolute)
         {
             return defaultPath;
@@ -94,7 +94,7 @@ public sealed class DirectoryPath(string path)
         {
             return;
         }
-        Directory.Delete(_path, recursive);
+        System.IO.Directory.Delete(_path, recursive);
         WaitUntil(() => !Exists());
     }
 
@@ -114,13 +114,13 @@ public sealed class DirectoryPath(string path)
         return true;
     }
 
-    public IReadOnlyList<FilePath> GetFiles(string pattern, bool recursive)
+    public IReadOnlyList<File> GetFiles(string pattern, bool recursive)
     {
         if (!Exists())
         {
             return [];
         }
         var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        return Directory.GetFiles(_path, pattern, searchOption).Select(x => new FilePath(x)).ToList();
+        return System.IO.Directory.GetFiles(_path, pattern, searchOption).Select(x => new File(x)).ToList();
     }
 }

@@ -1,10 +1,11 @@
 ﻿using NoeticTools.Git2SemVer.Core.FileSystem;
+using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
 
 
 namespace NoeticTools.Git2SemVer.Core.Tests.FileSystem;
 
 [TestFixture]
-public class DirectoryPathTests
+public class DirectoryTests
 {
     [TestCase("..", false)]
     [TestCase("../", false)]
@@ -14,14 +15,14 @@ public class DirectoryPathTests
     [TestCase("/.data_directory/", true)]
     public void IsAbsoluteTest(string path, bool expected)
     {
-        var directoryPath = new DirectoryPath(path);
+        var directoryPath = new Directory(path);
         Assert.That(directoryPath.IsAbsolute, Is.EqualTo(expected));
     }
 
     [Test]
     public void ToAbsolute_DoesNotExpandRootedDefaultPathsTest()
     {
-        var directoryPath = new DirectoryPath("");
+        var directoryPath = new Directory("");
 
         var result = directoryPath.ToAbsolute("/default_path/dir", "/working_directory");
 
@@ -33,7 +34,7 @@ public class DirectoryPathTests
     [TestCase("/.data_directory/../dir")]
     public void ToAbsolute_DoesNotExpandRootedPathsTest(string path)
     {
-        var directoryPath = new DirectoryPath(path);
+        var directoryPath = new Directory(path);
 
         var result = directoryPath.ToAbsolute("default_path/dir", "/working_directory");
 
@@ -43,7 +44,7 @@ public class DirectoryPathTests
     [Test]
     public void ToAbsolute_ExpandsNonRootedDefaultPathTest()
     {
-        var directoryPath = new DirectoryPath("");
+        var directoryPath = new Directory("");
 
         var result = directoryPath.ToAbsolute("default_path/dir", "/working_directory");
 
@@ -55,7 +56,7 @@ public class DirectoryPathTests
     [TestCase(".data_directory/dir/", "/working_directory/.data_directory/dir/")]
     public void ToAbsolute_ExpandsNonRootedPathsTest(string path, string expected)
     {
-        var directoryPath = new DirectoryPath(path);
+        var directoryPath = new Directory(path);
 
         var result = directoryPath.ToAbsolute("default_path/dir", "/working_directory");
 

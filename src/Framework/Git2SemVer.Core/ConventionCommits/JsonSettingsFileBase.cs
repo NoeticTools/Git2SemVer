@@ -1,4 +1,6 @@
 ﻿using NoeticTools.Git2SemVer.Core.FileSystem;
+using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
 namespace NoeticTools.Git2SemVer.Core.ConventionCommits;
@@ -6,7 +8,7 @@ namespace NoeticTools.Git2SemVer.Core.ConventionCommits;
 public abstract class JsonSettingsFileBase<T>
     where T : new()
 {
-    public static T Load(DirectoryPath dataDirectory, FilePath filename)
+    public static T Load(Directory dataDirectory, File filename)
     {
         var filePath = dataDirectory + filename;
         if (filePath.Exists())
@@ -19,12 +21,12 @@ public abstract class JsonSettingsFileBase<T>
         return config;
     }
 
-    private static T Load(FilePath filePath)
+    private static T Load(File file)
     {
-        return Git2SemVerJsonSerializer.Read<T>(filePath);
+        return Git2SemVerJsonSerializer.Read<T>(file);
     }
 
-    private void Save(DirectoryPath dataDirectory, FilePath filename)
+    private void Save(Directory dataDirectory, File filename)
     {
         var filePath = dataDirectory + filename;
         Git2SemVerJsonSerializer.Write(filePath, this);
