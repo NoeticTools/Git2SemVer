@@ -2,7 +2,7 @@
 using NoeticTools.Git2SemVer.Core.Exceptions;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging.Exceptions;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog.Exceptions;
 
 [ExcludeFromCodeCoverage]
 public class Git2SemVerScribanFileParsingException : Git2SemverExceptionBase

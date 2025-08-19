@@ -9,7 +9,7 @@ using NoeticTools.Git2SemVer.Framework.Versioning.GitHistoryWalking;
 using Semver;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 public class ConventionalCommitsVersionInfo
 {

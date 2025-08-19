@@ -2,7 +2,7 @@
 using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 public static class ChangelogConstants
 {

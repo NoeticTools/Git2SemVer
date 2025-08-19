@@ -1,12 +1,12 @@
 ﻿using NoeticTools.Git2SemVer.Core.ConventionCommits;
 using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging.Exceptions;
+using NoeticTools.Git2SemVer.Framework.ChangeLog.Exceptions;
 using Scriban;
 using Semver;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 [RegisterTransient]
 public class ChangelogGenerator(IChangelogSettings settings, ILogger logger)

@@ -4,7 +4,7 @@ using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 public sealed class ChangelogTemplateReader(ILogger logger)
 {

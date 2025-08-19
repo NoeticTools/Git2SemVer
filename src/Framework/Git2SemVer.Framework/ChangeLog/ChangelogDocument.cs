@@ -1,7 +1,7 @@
 ﻿using NoeticTools.Git2SemVer.Core.Logging;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 internal sealed class ChangelogDocument(string name, string content, ILogger logger)
 {

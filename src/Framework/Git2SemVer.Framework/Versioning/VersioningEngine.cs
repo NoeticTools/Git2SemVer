@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Core.Tools.Git;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging;
+using NoeticTools.Git2SemVer.Framework.ChangeLog;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Persistence;
 using NoeticTools.Git2SemVer.Framework.Versioning.Builders;

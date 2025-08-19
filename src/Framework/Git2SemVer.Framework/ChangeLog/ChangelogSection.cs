@@ -2,7 +2,7 @@
 using NoeticTools.Git2SemVer.Core.Exceptions;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 internal sealed class ChangelogSection(string name, ChangelogDocument document)
 {

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging;
+using NoeticTools.Git2SemVer.Framework.ChangeLog;
 using Spectre.Console;
 using Spectre.Console.Cli;
 

@@ -5,7 +5,7 @@ using NoeticTools.Git2SemVer.Core.ConventionCommits;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 /// <summary>
 ///     Git2SemVer changelog generation settings.

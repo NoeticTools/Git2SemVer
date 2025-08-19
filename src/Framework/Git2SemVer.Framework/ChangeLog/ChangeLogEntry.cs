@@ -3,7 +3,7 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 public sealed class ChangeLogEntry
 {

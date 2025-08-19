@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 /// <summary>
 ///     Configuration that defines changelog categories that are included in the changelog.

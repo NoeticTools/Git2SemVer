@@ -1,4 +1,4 @@
-﻿using NoeticTools.Git2SemVer.Framework.ChangeLogging;
+﻿using NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 
 namespace NoeticTools.Git2SemVer.Framework.Tests.ChangeLogging;

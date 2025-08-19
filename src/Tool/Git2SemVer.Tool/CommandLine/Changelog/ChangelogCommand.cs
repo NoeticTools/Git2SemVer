@@ -3,7 +3,7 @@ using NoeticTools.Git2SemVer.Core.Console;
 using NoeticTools.Git2SemVer.Core.ConventionCommits;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework;
-using NoeticTools.Git2SemVer.Framework.ChangeLogging;
+using NoeticTools.Git2SemVer.Framework.ChangeLog;
 using NoeticTools.Git2SemVer.Framework.Persistence;
 using NoeticTools.Git2SemVer.Framework.Versioning;
 using NoeticTools.Git2SemVer.Framework.Versioning.Builders.Scripting;

@@ -1,6 +1,7 @@
 ﻿using NoeticTools.Git2SemVer.Core.Exceptions;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework;
+using NoeticTools.Git2SemVer.Framework.ChangeLog;
 using NoeticTools.Git2SemVer.Framework.ChangeLogging;
 using NoeticTools.Git2SemVer.Framework.ChangeLogging.Task;
 

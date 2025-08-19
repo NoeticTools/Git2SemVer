@@ -6,7 +6,7 @@ using NoeticTools.Git2SemVer.Core.Logging;
 using Semver;
 
 
-namespace NoeticTools.Git2SemVer.Framework.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 /// <summary>
 ///     Data from the last run when generating a specific changelog.
