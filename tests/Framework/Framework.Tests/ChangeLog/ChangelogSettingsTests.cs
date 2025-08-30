@@ -1,7 +1,7 @@
 ﻿using NoeticTools.Git2SemVer.Framework.ChangeLog;
 
 
-namespace NoeticTools.Git2SemVer.Framework.Tests.ChangeLogging;
+namespace NoeticTools.Git2SemVer.Framework.Tests.ChangeLog;
 
 [TestFixture]
 public class ChangelogSettingsTests
@@ -44,55 +44,55 @@ public class ChangelogSettingsTests
 
         Assert.That(json, Is.EqualTo("""
                                      {
-                                       "Rev": "1",
-                                       "Enabled": true,
-                                       "OutputFilePath": "CHANGELOG.md",
-                                       "DataDirectory": ".git2semver/",
-                                       "ArtifactLinkPattern": "",
-                                       "IssueLinkFormat": "{0}",
-                                       "ConvCommits": {
-                                         "FooterIssueTokens": [
+                                       "rev": "1",
+                                       "enabled": true,
+                                       "outputFilePath": "CHANGELOG.md",
+                                       "dataDirectory": ".git2semver/",
+                                       "artifactLinkPattern": "",
+                                       "issueLinkFormat": "{0}",
+                                       "convCommits": {
+                                         "footerIssueTokens": [
                                            "issues",
                                            "issue",
                                            "ref",
                                            "refs"
                                          ]
                                        },
-                                       "Categories": [
+                                       "categories": [
                                          {
-                                           "ChangeTypePattern": "feat",
-                                           "Name": "Added",
-                                           "Order": 1
+                                           "changeTypePattern": "feat",
+                                           "name": "Added",
+                                           "order": 1
                                          },
                                          {
-                                           "ChangeTypePattern": "change",
-                                           "Name": "Changed",
-                                           "Order": 2
+                                           "changeTypePattern": "change",
+                                           "name": "Changed",
+                                           "order": 2
                                          },
                                          {
-                                           "ChangeTypePattern": "deprecate",
-                                           "Name": "Depreciated",
-                                           "Order": 3
+                                           "changeTypePattern": "deprecate",
+                                           "name": "Depreciated",
+                                           "order": 3
                                          },
                                          {
-                                           "ChangeTypePattern": "remove",
-                                           "Name": "Removed",
-                                           "Order": 4
+                                           "changeTypePattern": "remove",
+                                           "name": "Removed",
+                                           "order": 4
                                          },
                                          {
-                                           "ChangeTypePattern": "fix",
-                                           "Name": "Fixed",
-                                           "Order": 5
+                                           "changeTypePattern": "fix",
+                                           "name": "Fixed",
+                                           "order": 5
                                          },
                                          {
-                                           "ChangeTypePattern": "security",
-                                           "Name": "Security",
-                                           "Order": 6
+                                           "changeTypePattern": "security",
+                                           "name": "Security",
+                                           "order": 6
                                          },
                                          {
-                                           "ChangeTypePattern": "^(?!dev|Dev|refactor).*$",
-                                           "Name": "Other",
-                                           "Order": 7
+                                           "changeTypePattern": "^(?!dev|Dev|refactor).*$",
+                                           "name": "Other",
+                                           "order": 7
                                          }
                                        ]
                                      }

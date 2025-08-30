@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="JsonPeek" Version="1.2.0" />
-    <PackageReference Include="NoeticTools.Git2SemVer.MSBuild" Version="4.0.0-alpha.856" />
+    <PackageReference Include="NoeticTools.Git2SemVer.MSBuild" Version="4.0.0-alpha.868" />
   </ItemGroup>
 
 </Project>

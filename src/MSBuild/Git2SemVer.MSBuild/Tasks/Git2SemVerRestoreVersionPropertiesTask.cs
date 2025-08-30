@@ -43,7 +43,7 @@ public class Git2SemVerRestoreVersionPropertiesTask : Git2SemVerTaskBase
         try
         {
             logger.LogTrace("Restoring version properties.");
-            var cache = new VersioningOutputsJsonFileIO().Load(VersionCacheDirectory);
+            var cache = new VersioningOutputsJsonFileIO().Read(VersionCacheDirectory);
             SetOutputs(cache);
             logger.LogDebug("Restored PackageVersion: {0}", PackageVersion);
             return !Log.HasLoggedErrors;

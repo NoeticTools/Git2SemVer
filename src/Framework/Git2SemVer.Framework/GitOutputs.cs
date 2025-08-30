@@ -82,13 +82,13 @@ public sealed class GitOutputs : IGitOutputs
     /// <summary>
     ///     The last release's commit. Null if no prior release found.
     /// </summary>
-    [JsonPropertyName("LastReleaseCommit")]
+    [JsonPropertyName("lastReleaseCommit")]
     public ICommit? PriorReleaseCommit { get; }
 
     /// <summary>
     ///     The last release's version. Null if no prior release.
     /// </summary>
-    [JsonPropertyName("LastReleaseVersion")]
+    [JsonPropertyName("lastReleaseVersion")]
     public SemVersion? PriorReleaseVersion { get; }
 
     [JsonIgnore]

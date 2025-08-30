@@ -90,57 +90,57 @@ internal class VersionOutputsTests
 
         const string expected = """
                                 {
-                                  "Rev": 3,
-                                  "Git2SemVerVersionInfo": {
-                                    "Version": "0.0.0",
-                                    "InformationalVersion": "0.0.0",
-                                    "PackageVersion": "0.0.0",
-                                    "BuildSystemVersion": "5.6.7-TEST",
-                                    "AssemblyVersion": "10.11.12",
-                                    "FileVersion": "0.0.0",
-                                    "BuildNumber": "777",
-                                    "PrereleaseLabel": "",
-                                    "BuildContext": "CONTEXT",
-                                    "IsInInitialDevelopment": false,
-                                    "Git": {
+                                  "rev": 3,
+                                  "git2SemVerVersionInfo": {
+                                    "version": "0.0.0",
+                                    "informationalVersion": "0.0.0",
+                                    "packageVersion": "0.0.0",
+                                    "buildSystemVersion": "5.6.7-TEST",
+                                    "assemblyVersion": "10.11.12",
+                                    "fileVersion": "0.0.0",
+                                    "buildNumber": "777",
+                                    "prereleaseLabel": "",
+                                    "buildContext": "CONTEXT",
+                                    "isInInitialDevelopment": false,
+                                    "git": {
                                       "$type": "GitOutputs",
-                                      "BranchName": "",
-                                      "ContributingReleases": [],
-                                      "HasLocalChanges": false,
-                                      "HeadCommit": {
+                                      "branchName": "",
+                                      "contributingReleases": [],
+                                      "hasLocalChanges": false,
+                                      "headCommit": {
                                         "$type": "Commit",
-                                        "CommitId": {
-                                          "Sha": "00000000"
+                                        "commitId": {
+                                          "sha": "00000000"
                                         },
-                                        "TagMetadata": {
-                                          "ReleaseType": 1,
-                                          "Version": null,
-                                          "ChangeFlags": {
-                                            "BreakingChange": false,
-                                            "FunctionalityChange": false,
-                                            "Fix": false
+                                        "tagMetadata": {
+                                          "releaseType": 1,
+                                          "version": null,
+                                          "changeFlags": {
+                                            "breakingChange": false,
+                                            "functionalityChange": false,
+                                            "fix": false
                                           }
                                         },
-                                        "Summary": "null commit",
-                                        "Parents": [],
-                                        "MessageMetadata": {
-                                          "ApiChangeFlags": {
-                                            "BreakingChange": false,
-                                            "FunctionalityChange": false,
-                                            "Fix": false
+                                        "summary": "null commit",
+                                        "parents": [],
+                                        "messageMetadata": {
+                                          "apiChangeFlags": {
+                                            "breakingChange": false,
+                                            "functionalityChange": false,
+                                            "fix": false
                                           },
-                                          "Body": "",
-                                          "Description": "",
-                                          "ChangeType": "",
-                                          "Scope": "",
-                                          "FooterKeyValues": []
+                                          "body": "",
+                                          "description": "",
+                                          "changeType": "",
+                                          "scope": "",
+                                          "footerKeyValues": []
                                         }
                                       },
-                                      "LastReleaseCommit": null,
-                                      "LastReleaseVersion": null
+                                      "lastReleaseCommit": null,
+                                      "lastReleaseVersion": null
                                     },
-                                    "Output1": "",
-                                    "Output2": ""
+                                    "output1": "",
+                                    "output2": ""
                                   }
                                 }
                                 """;

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Exceptions;
 using NoeticTools.Git2SemVer.Framework.Versioning;
 using NoeticTools.Git2SemVer.Framework.Versioning.Builders;
@@ -12,26 +13,19 @@ namespace NoeticTools.Git2SemVer.Framework.Persistence;
 // ReSharper disable once ClassNeverInstantiated.Global
 public sealed class VersioningOutputsJsonFileIO : IOutputsJsonIO
 {
-    private static readonly JsonSerializerOptions SerialiseOptions = new()
-    {
-        WriteIndented = true,
-        Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
-        IncludeFields = false
-    };
-
     // ReSharper disable once MemberCanBePrivate.Global
     public static VersionOutputs FromJson(string json)
     {
-        return JsonSerializer.Deserialize<VersioningInfo>(json)!.Git2SemVerVersionInfo!;
+        return JsonSerializer.Deserialize<VersioningInfo>(json, JsonConstants.SerialiseOptions)!.Git2SemVerVersionInfo!;
     }
 
-    public IVersionOutputs Load(string directory)
+    public IVersionOutputs Read(string directory)
     {
-        return LoadFromFile(directory);
+        return ReadFromFile(directory);
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static IVersionOutputs LoadFromFile(string directory)
+    public static IVersionOutputs ReadFromFile(string directory)
     {
         var propertiesFilePath = GetFilePath(directory);
         if (!File.Exists(propertiesFilePath))
@@ -48,10 +42,10 @@ public sealed class VersioningOutputsJsonFileIO : IOutputsJsonIO
         Git2SemVerArgumentException.ThrowIfNull(outputs, nameof(outputs));
 
         var versionInfo = new VersioningInfo { Git2SemVerVersionInfo = (VersionOutputs)outputs };
-        return JsonSerializer.Serialize(versionInfo, SerialiseOptions);
+        return JsonSerializer.Serialize(versionInfo, JsonConstants.SerialiseOptions);
     }
 
-    public void Save(string directory, IVersionOutputs outputs)
+    public void Write(string directory, IVersionOutputs outputs)
     {
         Git2SemVerArgumentException.ThrowIfNullOrEmpty(directory, nameof(directory));
         Git2SemVerArgumentException.ThrowIfNull(outputs, nameof(outputs));

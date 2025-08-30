@@ -23,7 +23,7 @@ internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
 
         VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionVersioningProject), Times.Once);
         Assert.That(result.Versions, Is.SameAs(GeneratedOutputs.Object));
-        OutputsCacheJsonFile.Verify(x => x.Load("IntermediateOutputDirectory"), Times.Never);
+        OutputsCacheJsonFile.Verify(x => x.Read("IntermediateOutputDirectory"), Times.Never);
     }
 
     [Test]
@@ -35,6 +35,6 @@ internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
 
         VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionVersioningProject), Times.Never);
         Assert.That(result.Versions, Is.SameAs(SharedCachedOutputs.Object));
-        OutputsCacheJsonFile.Verify(x => x.Load("IntermediateOutputDirectory"), Times.Never);
+        OutputsCacheJsonFile.Verify(x => x.Read("IntermediateOutputDirectory"), Times.Never);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using NoeticTools.Git2SemVer.Core.ConventionCommits;
-using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework.ChangeLog.Exceptions;
 using Scriban;
@@ -43,8 +42,8 @@ public class ChangelogGenerator(ILogger logger)
         }
 
         releaseUrlOption = GetFirstNonEmptyOption(releaseUrlOption,
-                                            settings.ArtifactLinkPattern,
-                                            ChangelogConstants.DefaultArtifactLinkPattern);
+                                                  settings.ArtifactLinkPattern,
+                                                  ChangelogConstants.DefaultArtifactLinkPattern);
 
         outputFilePathOption ??= File.Null;
         outputFilePathOption = outputFilePathOption.ToAbsolute(settings.OutputFilePath, workingDirectory);

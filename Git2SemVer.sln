@@ -105,6 +105,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MSBuild", "MSBuild", "{D9F0
 		src\MSBuild\Directory.Versioning.Build.props = src\MSBuild\Directory.Versioning.Build.props
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".git2semver", ".git2semver", "{0B5105F2-D0A9-4AB6-8AF5-19423EFE6A52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "msbuild", "msbuild", "{E5CE4C86-6733-4116-948A-42CA3E108856}"
+	ProjectSection(SolutionItems) = preProject
+		.git2semver\msbuild\Git2SemVer.VersionInfo.g.json = .git2semver\msbuild\Git2SemVer.VersionInfo.g.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tool", "tool", "{FD87AD9C-2420-4355-B459-577BE41E1659}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -239,6 +248,9 @@ Global
 		{75062F7C-D916-9481-C0AB-F69C0DB3181A} = {8EED4F95-602C-4FD5-B3AF-75848E6E8CBF}
 		{41F9E5A4-9ADF-40D4-9272-04F88349B5A6} = {1890E2B7-C4AA-485A-A6ED-4E0B5979C920}
 		{D9F0F86A-F6C5-4832-A4F4-ECE2F1775197} = {1890E2B7-C4AA-485A-A6ED-4E0B5979C920}
+		{0B5105F2-D0A9-4AB6-8AF5-19423EFE6A52} = {4F5F4537-80BA-4561-A29C-DF6AD9921C08}
+		{E5CE4C86-6733-4116-948A-42CA3E108856} = {0B5105F2-D0A9-4AB6-8AF5-19423EFE6A52}
+		{FD87AD9C-2420-4355-B459-577BE41E1659} = {0B5105F2-D0A9-4AB6-8AF5-19423EFE6A52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7C89AA72-27F1-4410-8A4F-6F87F721B719}

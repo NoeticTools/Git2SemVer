@@ -102,12 +102,12 @@ internal sealed class VersioningEngine(
 
     private void SaveGeneratedVersions(IVersionOutputs outputs, VersioningMode versioningMode)
     {
-        generatedOutputsJsonFile.Save(inputs.IntermediateOutputDirectory, outputs);
+        generatedOutputsJsonFile.Write(inputs.IntermediateOutputDirectory, outputs);
         if (versioningMode == VersioningMode.StandAloneProject)
         {
             return;
         }
 
-        generatedOutputsJsonFile.Save(inputs.SolutionSharedDirectory, outputs);
+        generatedOutputsJsonFile.Write(inputs.SolutionSharedDirectory, outputs);
     }
 }

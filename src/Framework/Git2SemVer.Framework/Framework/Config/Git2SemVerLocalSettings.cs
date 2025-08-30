@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Text.Unicode;
+using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Framework.Tools.CI;
 
 
@@ -14,13 +15,6 @@ namespace NoeticTools.Git2SemVer.Framework.Framework.Config;
 public sealed class Git2SemVerLocalSettings : ILocalSettings
 {
     private static readonly Mutex FileMutex = new(false, "G2SemVerConfigFileMutex");
-
-    [JsonIgnore]
-    private static readonly JsonSerializerOptions SerialiseOptions = new()
-    {
-        WriteIndented = true,
-        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-    };
 
     [JsonIgnore]
     private int _onLoadHash;
@@ -96,7 +90,7 @@ public sealed class Git2SemVerLocalSettings : ILocalSettings
 
     public static Git2SemVerLocalSettings Load(string json)
     {
-        return JsonSerializer.Deserialize<Git2SemVerLocalSettings>(json)!;
+        return JsonSerializer.Deserialize<Git2SemVerLocalSettings>(json, JsonConstants.SerialiseOptions)!;
     }
 
     /// <summary>
@@ -117,7 +111,7 @@ public sealed class Git2SemVerLocalSettings : ILocalSettings
 
         _onLoadHash = currentHashCode;
 
-        var json = JsonSerializer.Serialize(this, SerialiseOptions);
+        var json = JsonSerializer.Serialize(this, JsonConstants.SerialiseOptions);
         json = Regex.Unescape(json);
 
         FileMutex.WaitOne(TimeSpan.FromSeconds(10));

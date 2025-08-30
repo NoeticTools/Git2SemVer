@@ -1,7 +1,6 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using NoeticTools.Git2SemVer.Core.FileSystem;
 using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
@@ -11,22 +10,15 @@ public static class Git2SemVerJsonSerializer
 {
     private static readonly Mutex FileMutex = new(false, "G2SemVerJsonFileMutex");
 
-    private static readonly JsonSerializerOptions SerialiseOptions = new()
-    {
-        WriteIndented = true,
-        IgnoreReadOnlyFields = true,
-        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-    };
-
     public static T Read<T>(File file) where T : new()
     {
-        FileMutex.WaitOne(TimeSpan.FromSeconds(10));
+        FileMutex.WaitOne(JsonConstants.ReadTimeLimit);
         try
         {
             if (file.Exists())
             {
                 var json = file.ReadAllText();
-                return JsonSerializer.Deserialize<T>(json)!;
+                return JsonSerializer.Deserialize<T>(json, JsonConstants.SerialiseOptions)!;
             }
             else
             {
@@ -41,22 +33,22 @@ public static class Git2SemVerJsonSerializer
 
     public static T Deserialise<T>(string json)
     {
-        return JsonSerializer.Deserialize<T>(json)!;
+        return JsonSerializer.Deserialize<T>(json, JsonConstants.SerialiseOptions)!;
     }
 
     public static string Serialise(object target)
     {
-        return JsonSerializer.Serialize(target, SerialiseOptions);
+        return JsonSerializer.Serialize(target, JsonConstants.SerialiseOptions);
     }
 
     public static void Write(File file, object target)
     {
         var json = Serialise(target);
 
-        FileMutex.WaitOne(TimeSpan.FromSeconds(10));
+        FileMutex.WaitOne(JsonConstants.WriteTimeLimit);
         try
         {
-            file.WriteAllText(json, true);
+            file.WriteAllText(json, createDirectory: true);
         }
         finally
         {

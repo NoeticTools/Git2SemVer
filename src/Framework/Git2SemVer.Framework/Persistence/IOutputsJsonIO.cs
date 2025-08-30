@@ -5,6 +5,6 @@ namespace NoeticTools.Git2SemVer.Framework.Persistence;
 
 public interface IOutputsJsonIO
 {
-    IVersionOutputs Load(string directory);
-    void Save(string directory, IVersionOutputs outputs);
+    IVersionOutputs Read(string directory);
+    void Write(string directory, IVersionOutputs outputs);
 }

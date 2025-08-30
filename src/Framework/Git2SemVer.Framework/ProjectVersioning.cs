@@ -59,13 +59,13 @@ public sealed class ProjectVersioning : IDisposable
 
     private string GetClientLastBuildNumber()
     {
-        var localCache = _outputsCacheJsonFile.Load(_inputs.IntermediateOutputDirectory);
+        var localCache = _outputsCacheJsonFile.Read(_inputs.IntermediateOutputDirectory);
         if (localCache.IsValid)
         {
             return localCache.BuildNumber;
         }
 
-        var shared = _outputsCacheJsonFile.Load(_inputs.SolutionSharedDirectory);
+        var shared = _outputsCacheJsonFile.Read(_inputs.SolutionSharedDirectory);
         return !shared.IsValid ? _host.BuildNumber : shared.BuildNumber;
     }
 
@@ -79,15 +79,15 @@ public sealed class ProjectVersioning : IDisposable
             return _versioningEngine.PrebuildRun(VersioningMode.SolutionClientProject);
         }
 
-        var output = _outputsCacheJsonFile.Load(_inputs.SolutionSharedDirectory);
-        _outputsCacheJsonFile.Save(_inputs.IntermediateOutputDirectory, output);
+        var output = _outputsCacheJsonFile.Read(_inputs.SolutionSharedDirectory);
+        _outputsCacheJsonFile.Write(_inputs.IntermediateOutputDirectory, output);
         return new VersioningOutputs(output, null);
     }
 
     private VersioningOutputs PerformSolutionVersioningProjectVersioning()
     {
         _logger.LogTrace("Versioning mode: Solution");
-        var output = _outputsCacheJsonFile.Load(_inputs.SolutionSharedDirectory);
+        var output = _outputsCacheJsonFile.Read(_inputs.SolutionSharedDirectory);
         return !output.IsValid ? _versioningEngine.PrebuildRun(VersioningMode.SolutionVersioningProject) : new VersioningOutputs(output, null);
     }
 

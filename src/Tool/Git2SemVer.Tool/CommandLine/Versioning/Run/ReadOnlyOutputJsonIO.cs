@@ -6,12 +6,12 @@ namespace NoeticTools.Git2SemVer.Tool.CommandLine.Versioning.Run;
 
 internal class ReadOnlyOutputJsonIO : IOutputsJsonIO
 {
-    public IVersionOutputs Load(string directory)
+    public IVersionOutputs Read(string directory)
     {
-        return new VersioningOutputsJsonFileIO().Load(directory);
+        return new VersioningOutputsJsonFileIO().Read(directory);
     }
 
-    public void Save(string directory, IVersionOutputs outputs)
+    public void Write(string directory, IVersionOutputs outputs)
     {
         // do nothing
     }

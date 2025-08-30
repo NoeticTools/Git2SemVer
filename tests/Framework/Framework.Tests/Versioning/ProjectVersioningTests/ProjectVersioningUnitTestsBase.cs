@@ -29,8 +29,8 @@ internal abstract class ProjectVersioningUnitTestsBase
         LocalCachedOutputs = new Mock<IVersionOutputs>();
         SharedCachedOutputs = new Mock<IVersionOutputs>();
 
-        OutputsCacheJsonFile.Setup(x => x.Load("IntermediateOutputDirectory")).Returns(LocalCachedOutputs.Object);
-        OutputsCacheJsonFile.Setup(x => x.Load("SolutionSharedDirectory")).Returns(SharedCachedOutputs.Object);
+        OutputsCacheJsonFile.Setup(x => x.Read("IntermediateOutputDirectory")).Returns(LocalCachedOutputs.Object);
+        OutputsCacheJsonFile.Setup(x => x.Read("SolutionSharedDirectory")).Returns(SharedCachedOutputs.Object);
 
         GeneratedOutputs = new Mock<IVersionOutputs>();
         VersionGenerator.Setup(x => x.PrebuildRun(It.IsAny<VersioningMode>())).Returns(new VersioningOutputs(GeneratedOutputs.Object, null));

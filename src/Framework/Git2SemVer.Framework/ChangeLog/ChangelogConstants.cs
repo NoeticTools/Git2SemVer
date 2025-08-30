@@ -25,7 +25,7 @@ public static class ChangelogConstants
 
     public const string IssueLinkFormat = "{0}";
 
-    public const string LastRunDataFileSuffix = ".g2sv.data.g.json";
+    public const string LastRunDataFileSuffix = ".data.g.json";
 
     public const string ProjectSettingsFilename = "git2semver.changelog.settings.json";
 
