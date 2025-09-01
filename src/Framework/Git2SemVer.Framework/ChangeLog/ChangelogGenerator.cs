@@ -53,13 +53,13 @@ public class ChangelogGenerator(ILogger logger)
         var lastRunData = createNewChangelog ? new LastRunData() : LastRunData.Load(dataDirectory, outputFilePathOption, logger);
         var scribanTemplate = new ChangelogTemplateReader(logger).Load(dataDirectory);
 
-        var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions, 
+        var conventionalCommitsVersionInfo = new ConventionalCommitsVersionInfo(versioning.Versions,
                                                                                 versioning.Metadata.Contributing);
-        var changelog = BuildChangelogContent(conventionalCommitsVersionInfo, 
-                                              scribanTemplate, 
-                                              releaseUrlOption, 
-                                              releaseAs, 
-                                              lastRunData, 
+        var changelog = BuildChangelogContent(conventionalCommitsVersionInfo,
+                                              scribanTemplate,
+                                              releaseUrlOption,
+                                              releaseAs,
+                                              lastRunData,
                                               changelogToUpdate,
                                               settings);
 
@@ -82,7 +82,7 @@ public class ChangelogGenerator(ILogger logger)
                                          string releaseUrl,
                                          string releaseAs,
                                          LastRunData lastRunData,
-                                         string changelogToUpdate, 
+                                         string changelogToUpdate,
                                          ChangelogSettings settings)
     {
         var contributingReleases = convCommits.ContributingReleases.Select(x => SemVersion.Parse(x, SemVersionStyles.Strict)).ToArray();
@@ -93,18 +93,15 @@ public class ChangelogGenerator(ILogger logger)
             lastRunData = new LastRunData();
         }
 
-        var messagesWithChanges = GetUnhandledChanges(convCommits.ConventionalCommits, lastRunData.HandledChanges);
+        var unhandledChanges = GetUnhandledChanges(convCommits.ContributingCommits, lastRunData.HandledChanges);
 
-        var issueMarkdownFormatter = new MarkdownLinkFormatter(settings.IssueLinkFormat);
-        var orderedCategories = settings.Categories.OrderBy(x => x.Order);
-        var changeCategories = orderedCategories.Select(category => ExtractChangeCategory(category, messagesWithChanges, issueMarkdownFormatter))
-                                                .ToList();
-        if (changelogToUpdate.Length > 0 && changeCategories.Count == 0)
+        var categorisedUnhandledChanges = Categorise(unhandledChanges, settings);
+        if (changelogToUpdate.Length > 0 && categorisedUnhandledChanges.Count == 0)
         {
             return changelogToUpdate;
         }
 
-        var newChangesContent = RenderContent(convCommits, scribanTemplate, releaseUrl, releaseAs, changeCategories);
+        var newChangesContent = RenderContent(convCommits, scribanTemplate, releaseUrl, releaseAs, categorisedUnhandledChanges);
         if (changelogToUpdate.Length == 0)
         {
             return newChangesContent;
@@ -121,19 +118,31 @@ public class ChangelogGenerator(ILogger logger)
         }
         else
         {
-            destinationDocument.AppendChanges(changeCategories, newChanges);
+            destinationDocument.AppendChanges(categorisedUnhandledChanges, newChanges);
         }
 
         return destinationDocument.Content;
     }
 
-    private static ChangeCategory ExtractChangeCategory(CategorySettings categorySettings,
-                                                        List<ConventionalCommit> changeMessages,
-                                                        ITextFormatter markdownIssueFormatter)
+    private static List<ChangeCategory> Categorise(IReadOnlyList<ConventionalCommit> unhandledChanges,
+                                                   ChangelogSettings settings)
     {
-        var changeCategory = new ChangeCategory(categorySettings, markdownIssueFormatter);
-        changeCategory.ExtractChangeLogsFrom(changeMessages);
-        return changeCategory;
+        var remainingUnhandledChanges = new List<ConventionalCommit>(unhandledChanges);
+        var issueFormatter = new MarkdownLinkFormatter(settings.IssueLinkFormat);
+        var orderedCategories = settings.Categories.OrderBy(x => x.Order);
+        return orderedCategories.Select(categorySettings =>
+                                {
+                                    var category = new ChangeCategory(categorySettings);
+                                    var matchingChanges = remainingUnhandledChanges.Where(category.Matches).ToList();
+                                    category.AddRange(GetUniqueChangelogEntries(matchingChanges, issueFormatter));
+                                    foreach (var change in category.Changes)
+                                    {
+                                        remainingUnhandledChanges.Remove(change.MessageMetadata);
+                                    }
+
+                                    return category;
+                                })
+                                .ToList();
     }
 
     private static string GetFirstNonEmptyOption(params string[] prioritisedValues)
@@ -154,21 +163,21 @@ public class ChangelogGenerator(ILogger logger)
     /// </summary>
     /// <param name="changeMessages"></param>
     /// <param name="handledChanges"></param>
-    private static List<ConventionalCommit> GetUnhandledChanges(IReadOnlyList<ConventionalCommit> changeMessages,
-                                                                List<HandledChange> handledChanges)
+    private static IReadOnlyList<ConventionalCommit> GetUnhandledChanges(IReadOnlyList<ConventionalCommit> changeMessages,
+                                                                         List<HandledChange> handledChanges)
     {
         var unhandledMessages = new List<ConventionalCommit>(changeMessages);
-        var handledChangesLookup = new ChangeLookup<HandledChange>(handledChanges, v => v);
-        foreach (var changeMessage in unhandledMessages.ToArray())
+        var handledChangesLookup = new HandledChangeLookup(handledChanges);
+        foreach (var changeMessage in changeMessages)
         {
             if (handledChangesLookup.TryGet(changeMessage, out var handledChange))
             {
                 if (!handledChange!.TryAddIssues(changeMessage.Issues))
                 {
-                    unhandledMessages.Remove(changeMessage);
+                    unhandledMessages.Remove(changeMessage); // only unhandled if it contributes new issues
                 }
             }
-            else
+            else //xxxx // THIS METHOD IS DOING 2 THINGS - FINDING UNHANDLED CHANGES AND UPDATING HANDLED CHANGES
             {
                 var newHandledChange = new HandledChange
                 {
@@ -182,6 +191,24 @@ public class ChangelogGenerator(ILogger logger)
         }
 
         return unhandledMessages.OrderBy(x => x.Description).ToList();
+    }
+
+    private static IReadOnlyList<ChangeLogEntry> GetUniqueChangelogEntries(IReadOnlyList<ConventionalCommit> metadata,
+                                                                           ITextFormatter markdownIssueFormatter)
+    {
+        var changeLogEntries = new ChangeLogEntryLookup();
+        foreach (var metadataDatum in metadata)
+        {
+            if (!changeLogEntries.TryGet(metadataDatum, out var logEntry))
+            {
+                logEntry = new ChangeLogEntry(metadataDatum, markdownIssueFormatter);
+                changeLogEntries.Add(logEntry);
+            }
+
+            logEntry!.TryAddIssues(metadataDatum.Issues);
+        }
+
+        return changeLogEntries.ToList();
     }
 
     private static string RenderContent(ConventionalCommitsVersionInfo inputs,

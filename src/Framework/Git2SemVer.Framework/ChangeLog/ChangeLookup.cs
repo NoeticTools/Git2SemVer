@@ -3,25 +3,22 @@
 
 namespace NoeticTools.Git2SemVer.Framework.ChangeLog;
 
-internal sealed class ChangeLookup<T>
+internal abstract class ChangeLookup<T>
 {
     private readonly Dictionary<string, Dictionary<string, T>> _inner = new();
-    private readonly Func<T, IChangeTypeAndDescription> _keysLookup;
 
-    public ChangeLookup(Func<T, IChangeTypeAndDescription> keysLookup)
-        : this([], keysLookup)
+    protected ChangeLookup() : this([])
     {
     }
 
-    public ChangeLookup(IEnumerable<T> handledChanges, Func<T, IChangeTypeAndDescription> keysLookup)
+    protected ChangeLookup(IEnumerable<T> handledChanges)
     {
-        _keysLookup = keysLookup;
         AddRange(handledChanges);
     }
 
     public void Add(T value)
     {
-        Add(GetKeys(_keysLookup(value)), value);
+        Add(GetKeys(ToChangeMetadata(value)), value);
     }
 
     public IReadOnlyList<T> ToList()
@@ -29,28 +26,28 @@ internal sealed class ChangeLookup<T>
         return _inner.SelectMany(x => x.Value.Select(y => y.Value)).ToList();
     }
 
-    public bool TryGet(IChangeTypeAndDescription messageMetadata, out T? value)
+    public bool TryGet(IChangeTypeAndDescription changeMetadata, out T? value)
     {
-        return TryGet(GetKeys(messageMetadata), out value);
+        return TryGet(GetKeys(changeMetadata), out value);
     }
 
-    private T this[(string, string) key] => _inner[key.Item1][key.Item2];
+    private T this[(string changeType, string description) key] => _inner[key.changeType][key.description];
 
-    private void Add((string, string) key, T value)
+    private void Add((string changeType, string description) key, T value)
     {
         Dictionary<string, T> itemsDictionary;
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
-        if (!_inner.ContainsKey(key.Item1))
+        if (!_inner.ContainsKey(key.changeType))
         {
             itemsDictionary = new Dictionary<string, T>();
-            _inner.Add(key.Item1, itemsDictionary);
+            _inner.Add(key.changeType, itemsDictionary);
         }
         else
         {
-            itemsDictionary = _inner[key.Item1];
+            itemsDictionary = _inner[key.changeType];
         }
 
-        itemsDictionary.Add(key.Item2, value);
+        itemsDictionary.Add(key.description, value);
     }
 
     private void AddRange(IEnumerable<T> items)
@@ -61,18 +58,18 @@ internal sealed class ChangeLookup<T>
         }
     }
 
-    private bool Contains((string, string) key)
+    private bool Contains((string changeType, string description) key)
     {
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
-        return _inner.ContainsKey(key.Item1) && _inner[key.Item1].ContainsKey(key.Item2);
+        return _inner.ContainsKey(key.changeType) && _inner[key.changeType].ContainsKey(key.description);
     }
 
-    private static (string, string) GetKeys(IChangeTypeAndDescription value)
+    private static (string changeType, string description) GetKeys(IChangeTypeAndDescription value)
     {
         return (value.ChangeType, value.Description);
     }
 
-    private bool TryGet((string, string) key, out T? value)
+    private bool TryGet((string changeType, string description) key, out T? value)
     {
         if (Contains(key))
         {
@@ -83,4 +80,6 @@ internal sealed class ChangeLookup<T>
         value = default;
         return false;
     }
+
+    protected abstract IChangeTypeAndDescription ToChangeMetadata(T item);
 }

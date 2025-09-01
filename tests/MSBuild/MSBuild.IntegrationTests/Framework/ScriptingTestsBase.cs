@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using NoeticTools.Git2SemVer.Core.ConventionCommits;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Core.Tools.Git;
@@ -13,6 +14,7 @@ internal abstract class ScriptingTestsBase
 {
     private const int MaximumTestDataFolders = 20;
     private static int _testDataFolderId; // avoid locks on folders not release quickly between tests
+    private static object _sync = new();
 
     protected string TestFolderPath = "";
 
@@ -35,12 +37,16 @@ internal abstract class ScriptingTestsBase
     {
         Logger = new NUnitLogger { Level = LoggingLevel.Trace };
 
-        if (_testDataFolderId > MaximumTestDataFolders)
+        int dataFolderId;
+        lock (_sync)
         {
-            _testDataFolderId = 0;
+            if (_testDataFolderId > MaximumTestDataFolders)
+            {
+                _testDataFolderId = 0;
+            }
+            dataFolderId = ++_testDataFolderId;
         }
 
-        var dataFolderId = ++_testDataFolderId;
         TestFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                       "Git2SemVer",
                                       $"TestData{dataFolderId}");
