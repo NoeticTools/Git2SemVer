@@ -1,6 +1,4 @@
-﻿using NoeticTools.Git2SemVer.Core.FileSystem;
-using System.IO;
-using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+﻿using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
 
 
 namespace NoeticTools.Git2SemVer.Core.Tests.FileSystem;

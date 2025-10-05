@@ -8,12 +8,6 @@ namespace NoeticTools.Git2SemVer.Framework.Tests.Versioning;
 [TestFixture]
 internal class VersionOutputsTests
 {
-    [SetUp]
-    public void SetUp()
-    {
-        //CommitObfuscator.Clear();
-    }
-
     [Test]
     public void CanDeserialiseRev2()
     {
@@ -158,5 +152,11 @@ internal class VersionOutputsTests
 
         Assert.That(target.InformationalVersion, Is.EqualTo(informationalVersion));
         Assert.That(target.PackageVersion, Is.EqualTo(informationalVersion.WithoutMetadata()));
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        //CommitObfuscator.Clear();
     }
 }

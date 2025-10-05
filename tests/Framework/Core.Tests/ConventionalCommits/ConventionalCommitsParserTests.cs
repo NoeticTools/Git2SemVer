@@ -12,12 +12,6 @@ internal class ConventionalCommitsParserTests
 {
     private ConventionalCommitsParser _target;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _target = new ConventionalCommitsParser(new ConventionalCommitsSettings());
-    }
-
     [TestCase(
                  """
                  Body - paragraph1
@@ -333,6 +327,12 @@ internal class ConventionalCommitsParserTests
         Assert.That(result.Description, Is.EqualTo(expectedChangeDescription));
         Assert.That(result.Body, Is.Empty);
         Assert.That(result.FooterKeyValues, Is.Empty);
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _target = new ConventionalCommitsParser(new ConventionalCommitsSettings());
     }
 
     private static FooterKeyValues GetExpectedFooterKeyValues(string[] expectedTopicValues)

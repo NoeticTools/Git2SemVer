@@ -8,12 +8,6 @@ namespace NoeticTools.Git2SemVer.Framework.Tests.Versioning.ProjectVersioningTes
 
 internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
 {
-    [SetUp]
-    public void SetUp()
-    {
-        SharedCachedOutputs.Setup(x => x.BuildNumber).Returns("42");
-    }
-
     [Test]
     public void DoesGenerate_WhenCachedOutputsNotAvailableTest()
     {
@@ -36,5 +30,11 @@ internal class SolutionVersionProjectUnitTests : ProjectVersioningUnitTestsBase
         VersionGenerator.Verify(x => x.PrebuildRun(VersioningMode.SolutionVersioningProject), Times.Never);
         Assert.That(result.Versions, Is.SameAs(SharedCachedOutputs.Object));
         OutputsCacheJsonFile.Verify(x => x.Read("IntermediateOutputDirectory"), Times.Never);
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        SharedCachedOutputs.Setup(x => x.BuildNumber).Returns("42");
     }
 }

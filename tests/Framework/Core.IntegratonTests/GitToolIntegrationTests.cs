@@ -15,20 +15,6 @@ public class GitToolIntegrationTests
     private ConsoleLogger _logger;
     private GitTool _target;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _logger = new ConsoleLogger();
-        _target = new GitTool(new TagParser(), new ConventionalCommitsParser(new ConventionalCommitsSettings()));
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _target.Dispose();
-        _logger.Dispose();
-    }
-
     [Test]
     public void CanInvokeGitTest()
     {
@@ -45,6 +31,20 @@ public class GitToolIntegrationTests
         Assert.That(commits, Has.Count.LessThan(301));
         Assert.That(commits, Has.Count.GreaterThan(100));
         Assert.That(commits[0], Is.SameAs(commit));
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _logger = new ConsoleLogger();
+        _target = new GitTool(new TagParser(), new ConventionalCommitsParser(new ConventionalCommitsSettings()));
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _target.Dispose();
+        _logger.Dispose();
     }
 
     private static Commit GetCommitAtIndex(GitTool target, int index)

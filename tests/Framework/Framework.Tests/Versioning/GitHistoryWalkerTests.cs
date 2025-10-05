@@ -18,6 +18,18 @@ internal class GitHistoryWalkerTests
     private NUnitLogger _logger;
     private Mock<ICommitsCache> _repository;
 
+    [TestCaseSource(typeof(ManufacturedGitRepositoriesTestSource))]
+    public void FindPathsToHead(string name, GitTestRepository scenario)
+    {
+        _logger.LogInfo(scenario.Description + "\n");
+        LoadRepository(scenario.Commits, scenario.HeadCommitId);
+        var target = new GitHistoryWalker(_gitTool.Object, _logger);
+
+        var result = target.CalculateSemanticVersion();
+
+        Assert.That(result.Version.ToString(), Is.EqualTo(scenario.ExpectedVersion));
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -38,18 +50,6 @@ internal class GitHistoryWalkerTests
     public void TearDown()
     {
         _logger.Dispose();
-    }
-
-    [TestCaseSource(typeof(ManufacturedGitRepositoriesTestSource))]
-    public void FindPathsToHead(string name, GitTestRepository scenario)
-    {
-        _logger.LogInfo(scenario.Description + "\n");
-        LoadRepository(scenario.Commits, scenario.HeadCommitId);
-        var target = new GitHistoryWalker(_gitTool.Object, _logger);
-
-        var result = target.CalculateSemanticVersion();
-
-        Assert.That(result.Version.ToString(), Is.EqualTo(scenario.ExpectedVersion));
     }
 
     private void LoadRepository(IEnumerable<Commit> commits, string headCommitId)

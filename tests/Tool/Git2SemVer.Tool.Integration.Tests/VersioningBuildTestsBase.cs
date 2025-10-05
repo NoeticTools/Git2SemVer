@@ -7,28 +7,6 @@ namespace NoeticTools.Git2SemVer.Tool.Integration.Tests;
 
 internal abstract class VersioningBuildTestsBase : SolutionTestsBase
 {
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        OneTimeSetUpBase();
-
-        //BuildGit2SemVerMSBuild();
-        //BuildGit2SemVerTool();
-
-        var testProjectBinDirectory = Path.Combine(TestSolutionDirectory, "TestApplication/bin/", BuildConfiguration);
-        CompiledAppPath = Path.Combine(testProjectBinDirectory, "net8.0", "NoeticTools.TestApplication.dll");
-        PackageOutputDir = testProjectBinDirectory;
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        SetUpBase();
-        if (Directory.Exists(PackageOutputDir))
-        {
-            Directory.Delete(PackageOutputDir, true);
-        }
-    }
     //[Test]
     //[CancelAfter(60000)]
     //public void BuildAndThenPackWithoutRebuildTest()
@@ -82,6 +60,43 @@ internal abstract class VersioningBuildTestsBase : SolutionTestsBase
         AssertFileExists(PackageOutputDir, "NoeticTools.TestApplication.5.6.7.nupkg");
     }
 
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
+    {
+        OneTimeSetUpBase();
+
+        //BuildGit2SemVerMSBuild();
+        //BuildGit2SemVerTool();
+
+        var testProjectBinDirectory = Path.Combine(TestSolutionDirectory, "TestApplication/bin/", BuildConfiguration);
+        CompiledAppPath = Path.Combine(testProjectBinDirectory, "net8.0", "NoeticTools.TestApplication.dll");
+        PackageOutputDir = testProjectBinDirectory;
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        SetUpBase();
+        if (Directory.Exists(PackageOutputDir))
+        {
+            Directory.Delete(PackageOutputDir, true);
+        }
+    }
+
+    protected static void AssertFileExists(string packageDirectory, string expectedFilename)
+    {
+        var directory = new DirectoryInfo(packageDirectory);
+        var foundFiles = directory.GetFiles(expectedFilename);
+        Assert.That(foundFiles.Length, Is.EqualTo(1), $"File '{expectedFilename}' does not exist.");
+    }
+
+    protected void DotNetCliBuildTestSolution(params string[] arguments)
+    {
+        var returnCode = DotNetCli.Build(TestSolutionPath, BuildConfiguration, arguments);
+        Assert.That(returnCode, Is.EqualTo(0));
+        Assert.That(Logger.HasError, Is.False);
+    }
+
     private void BuildTestSolution(string scriptName)
     {
         var scriptPath = DeployScript(scriptName);
@@ -104,18 +119,4 @@ internal abstract class VersioningBuildTestsBase : SolutionTestsBase
 
     protected string CompiledAppPath;
     protected string PackageOutputDir;
-
-    protected void DotNetCliBuildTestSolution(params string[] arguments)
-    {
-        var returnCode = DotNetCli.Build(TestSolutionPath, BuildConfiguration, arguments);
-        Assert.That(returnCode, Is.EqualTo(0));
-        Assert.That(Logger.HasError, Is.False);
-    }
-
-    protected static void AssertFileExists(string packageDirectory, string expectedFilename)
-    {
-        var directory = new DirectoryInfo(packageDirectory);
-        var foundFiles = directory.GetFiles(expectedFilename);
-        Assert.That(foundFiles.Length, Is.EqualTo(1), $"File '{expectedFilename}' does not exist.");
-    }
 }

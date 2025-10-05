@@ -26,37 +26,6 @@ internal class DefaultVersionBuilderTests
     private Mock<IVersionOutputs> _outputs;
     private SemVersion _version = null!;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _logger = new NUnitLogger(false)
-        {
-            Level = LoggingLevel.Debug
-        };
-
-        _host = new Mock<IBuildHost>();
-        _inputs = new Mock<IVersionGeneratorInputs>();
-        _headCommit = new Mock<ICommit>();
-        _gitOutputs = new Mock<IGitOutputs>();
-        _outputs = new Mock<IVersionOutputs>();
-        _git = new Mock<IGitTool>();
-        _msBuildGlobalProperties = new Mock<IMSBuildGlobalProperties>();
-
-        _host.Setup(x => x.BuildNumber).Returns(BuildNumber);
-        _host.Setup(x => x.BuildContext).Returns("BUILD_CONTEXT");
-        _host.Setup(x => x.BuildId).Returns(["77"]);
-        _inputs.Setup(x => x.WorkingDirectory).Returns("WorkingDirectory");
-        _headCommit.Setup(x => x.CommitId).Returns(new CommitId("001"));
-        _gitOutputs.Setup(x => x.HeadCommit).Returns(_headCommit.Object);
-        _outputs.Setup(x => x.Git).Returns(_gitOutputs.Object);
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _logger.Dispose();
-    }
-
     [TestCase("0.1.0", "main", "InitialDev")]
     [TestCase("0.5.1", "release", "InitialDev")]
     [TestCase("0.5.1", "release/anything", "InitialDev")]
@@ -98,6 +67,37 @@ internal class DefaultVersionBuilderTests
 
         _outputs.VerifySet(x => x.BuildSystemVersion = _version.WithMetadata(BuildNumber), Times.Once);
         _outputs.VerifySet(x => x.BuildSystemVersion = _version.WithoutMetadata(), Times.Never);
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _logger = new NUnitLogger(false)
+        {
+            Level = LoggingLevel.Debug
+        };
+
+        _host = new Mock<IBuildHost>();
+        _inputs = new Mock<IVersionGeneratorInputs>();
+        _headCommit = new Mock<ICommit>();
+        _gitOutputs = new Mock<IGitOutputs>();
+        _outputs = new Mock<IVersionOutputs>();
+        _git = new Mock<IGitTool>();
+        _msBuildGlobalProperties = new Mock<IMSBuildGlobalProperties>();
+
+        _host.Setup(x => x.BuildNumber).Returns(BuildNumber);
+        _host.Setup(x => x.BuildContext).Returns("BUILD_CONTEXT");
+        _host.Setup(x => x.BuildId).Returns(["77"]);
+        _inputs.Setup(x => x.WorkingDirectory).Returns("WorkingDirectory");
+        _headCommit.Setup(x => x.CommitId).Returns(new CommitId("001"));
+        _gitOutputs.Setup(x => x.HeadCommit).Returns(_headCommit.Object);
+        _outputs.Setup(x => x.Git).Returns(_gitOutputs.Object);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _logger.Dispose();
     }
 
     private DefaultVersionBuilder SetupInputs(string version, string branchName)

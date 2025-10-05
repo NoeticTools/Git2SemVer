@@ -22,12 +22,6 @@ public class ContentEditorTests
 
     private ContentEditor _target;
 
-    [SetUp]
-    public void Setup()
-    {
-        _target = new ContentEditor();
-    }
-
     [TestCase("true")]
     [TestCase("Project")]
     [TestCase("x")]
@@ -72,5 +66,11 @@ public class ContentEditorTests
         var result = _target.RemoveLinesWith(signature, Content);
 
         Assert.That(expected, Is.EqualTo(result));
+    }
+
+    [SetUp]
+    public void Setup()
+    {
+        _target = new ContentEditor();
     }
 }

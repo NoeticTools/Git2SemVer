@@ -24,6 +24,12 @@ internal class AddCommandTests
     private AddCommand _target;
     private Mock<IUserOptionsPrompt> _userOptionsPrompt;
 
+    [Test]
+    public void CanConstructTest()
+    {
+        Assert.That(_target, Is.Not.Null);
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -50,11 +56,5 @@ internal class AddCommandTests
     public void TearDown()
     {
         _logger.Dispose();
-    }
-
-    [Test]
-    public void CanConstructTest()
-    {
-        Assert.That(_target, Is.Not.Null);
     }
 }

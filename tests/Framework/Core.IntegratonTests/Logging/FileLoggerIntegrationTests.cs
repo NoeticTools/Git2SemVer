@@ -9,21 +9,6 @@ internal class FileLoggerIntegrationTests
 {
     private string _outputFilePath;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _outputFilePath = Path.GetTempFileName();
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        if (File.Exists(_outputFilePath))
-        {
-            File.Delete(_outputFilePath);
-        }
-    }
-
     [Test]
     public void LogErrorException()
     {
@@ -231,6 +216,21 @@ internal class FileLoggerIntegrationTests
                              TRACE | Last line
 
                              """);
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _outputFilePath = Path.GetTempFileName();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        if (File.Exists(_outputFilePath))
+        {
+            File.Delete(_outputFilePath);
+        }
     }
 
     private void ValidateFileContents(string expected)

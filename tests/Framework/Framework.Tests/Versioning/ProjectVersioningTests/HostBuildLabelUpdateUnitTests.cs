@@ -7,14 +7,6 @@ namespace NoeticTools.Git2SemVer.Framework.Tests.Versioning.ProjectVersioningTes
 
 internal class HostBuildLabelUpdateUnitTests : ProjectVersioningUnitTestsBase
 {
-    [SetUp]
-    public void SetUp()
-    {
-        SharedCachedOutputs.Setup(x => x.IsValid).Returns(true);
-        GeneratedOutputs.Setup(x => x.IsValid).Returns(true);
-        VersionGenerator.Setup(x => x.PrebuildRun(Moq.It.IsAny<VersioningMode>())).Returns(new VersioningOutputs(GeneratedOutputs.Object, null));
-    }
-
     [TestCase(VersioningMode.SolutionVersioningProject)]
     [TestCase(VersioningMode.SolutionClientProject)]
     [TestCase(VersioningMode.StandAloneProject)]
@@ -55,5 +47,13 @@ internal class HostBuildLabelUpdateUnitTests : ProjectVersioningUnitTestsBase
         Target.Run(mode);
 
         Host.Verify(x => x.SetBuildLabel(buildSystemVersion.ToString()), Times.Once);
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        SharedCachedOutputs.Setup(x => x.IsValid).Returns(true);
+        GeneratedOutputs.Setup(x => x.IsValid).Returns(true);
+        VersionGenerator.Setup(x => x.PrebuildRun(It.IsAny<VersioningMode>())).Returns(new VersioningOutputs(GeneratedOutputs.Object, null));
     }
 }

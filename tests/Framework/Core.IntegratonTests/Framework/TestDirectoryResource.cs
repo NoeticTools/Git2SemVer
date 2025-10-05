@@ -7,8 +7,8 @@ namespace NoeticTools.Git2SemVer.Core.IntegrationTests.Framework;
 
 public static class TestDirectoryResource
 {
-    private static readonly ConcurrentDictionary<TestExecutionContext, DirectoryInfo> ResourceByTestContext = [];
     private static int _nextContextId;
+    private static readonly ConcurrentDictionary<TestExecutionContext, DirectoryInfo> ResourceByTestContext = [];
 
     public static DirectoryInfo Get()
     {

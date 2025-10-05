@@ -19,6 +19,12 @@ internal class RemoveCommandTests
     private Mock<ISolutionFinder> _solutionFinder;
     private RemoveCommand _target;
 
+    [Test]
+    public void CanConstructTest()
+    {
+        Assert.That(_target, Is.Not.Null);
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -38,11 +44,5 @@ internal class RemoveCommandTests
     public void TearDown()
     {
         _logger.Dispose();
-    }
-
-    [Test]
-    public void CanConstructTest()
-    {
-        Assert.That(_target, Is.Not.Null);
     }
 }

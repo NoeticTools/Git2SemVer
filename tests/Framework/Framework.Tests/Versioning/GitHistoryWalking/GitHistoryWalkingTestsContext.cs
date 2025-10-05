@@ -11,18 +11,6 @@ internal class GitHistoryWalkingTestsContext : IDisposable
 {
     private readonly GitResponseParser _logParser;
 
-    public GitHistoryWalkingTestsContext()
-    {
-        Logger = new NUnitLogger(false) { Level = LoggingLevel.Trace };
-        _logParser = new GitResponseParser(new CommitsCache(), new ConventionalCommitsParser(new ConventionalCommitsSettings()));
-        GitTool = new Mock<IGitTool>();
-        GitTool.Setup(x => x.BranchName).Returns("BranchName");
-    }
-
-    public Mock<IGitTool> GitTool { get; }
-
-    public NUnitLogger Logger { get; }
-
     public void Dispose()
     {
         Logger.Dispose();
@@ -40,4 +28,16 @@ internal class GitHistoryWalkingTestsContext : IDisposable
         var lines = gitLog.Split('\n');
         return lines.Select(line => _logParser.ParseGitLogLine(line)).OfType<Commit>().ToList();
     }
+
+    public GitHistoryWalkingTestsContext()
+    {
+        Logger = new NUnitLogger(false) { Level = LoggingLevel.Trace };
+        _logParser = new GitResponseParser(new CommitsCache(), new ConventionalCommitsParser(new ConventionalCommitsSettings()));
+        GitTool = new Mock<IGitTool>();
+        GitTool.Setup(x => x.BranchName).Returns("BranchName");
+    }
+
+    public Mock<IGitTool> GitTool { get; }
+
+    public NUnitLogger Logger { get; }
 }

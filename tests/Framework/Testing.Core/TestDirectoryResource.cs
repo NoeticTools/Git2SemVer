@@ -12,8 +12,8 @@ namespace NoeticTools.Git2SemVer.Testing.Core;
 /// </summary>
 public class TestDirectoryResource : IDisposable
 {
-    private static readonly ConcurrentDictionary<TestExecutionContext, DirectoryInfo> ResourceByTestContext = [];
     private static int _nextContextId;
+    private static readonly ConcurrentDictionary<TestExecutionContext, DirectoryInfo> ResourceByTestContext = [];
     private readonly string _groupName;
     private bool _disposed;
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NoeticTools.Git2SemVer.Core.Extensions;
+﻿using NoeticTools.Git2SemVer.Core.Extensions;
 using Semver;
 
 

@@ -11,29 +11,6 @@ internal class ToolIntegrationTests : SolutionTestsBase
 {
     private string _packageOutputDir;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        OneTimeSetUpBase();
-
-        var testProjectBinDirectory = Path.Combine(TestSolutionDirectory, "TestApplication/bin/", BuildConfiguration);
-        _packageOutputDir = testProjectBinDirectory;
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        SetUpBase();
-        DeleteAllNuGetPackages(_packageOutputDir);
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        Console.WriteLine("-- Test Tear Down --");
-        ExecuteGit2SemVerTool("remove -u");
-    }
-
     [TestCase("ver setup")]
     [TestCase("versioning setup")]
     public void AddCommandTest(string commandPrefix)
@@ -191,6 +168,29 @@ internal class ToolIntegrationTests : SolutionTestsBase
 
         Assert.That(Logger.HasError, Is.False);
         Assert.That(result.returnCode, Is.Zero);
+    }
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
+    {
+        OneTimeSetUpBase();
+
+        var testProjectBinDirectory = Path.Combine(TestSolutionDirectory, "TestApplication/bin/", BuildConfiguration);
+        _packageOutputDir = testProjectBinDirectory;
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        SetUpBase();
+        DeleteAllNuGetPackages(_packageOutputDir);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        Console.WriteLine("-- Test Tear Down --");
+        ExecuteGit2SemVerTool("remove -u");
     }
 
     protected override string SolutionFolderName => "SolutionVersioning";

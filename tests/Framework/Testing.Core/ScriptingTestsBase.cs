@@ -51,12 +51,12 @@ public abstract class ScriptingTestsBase : TestFixtureBase
         Git = new GitTool(new TagParser(), new ConventionalCommitsParser(new ConventionalCommitsSettings()));
     }
 
-    protected DotNetTool DotNetCli { get; private set; } = null!;
-
     protected void OneTimeTearDownBase()
     {
         Git.Dispose();
     }
+
+    protected DotNetTool DotNetCli { get; private set; } = null!;
 
     protected GitTool Git { get; private set; } = null!;
 

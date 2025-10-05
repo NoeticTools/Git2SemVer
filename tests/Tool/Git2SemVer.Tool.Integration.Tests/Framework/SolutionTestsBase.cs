@@ -12,13 +12,6 @@ internal abstract class SolutionTestsBase : ScriptingTestsBase
     private string _currentDirectory = "";
     private string _git2SemVerToolPath = "";
     private string _solutionDirectory = "";
-    protected string TestSolutionDirectory = "";
-    protected string TestSolutionPath = "";
-    protected string BuildConfiguration = "";
-
-    protected abstract string SolutionFolderName { get; }
-
-    protected abstract string SolutionName { get; }
 
     protected override void OneTimeSetUpBase()
     {
@@ -31,6 +24,10 @@ internal abstract class SolutionTestsBase : ScriptingTestsBase
         _git2SemVerToolPath =
             Path.Combine(_solutionDirectory, "src", "Tool", "Git2SemVer.Tool/bin", BuildConfiguration, "net8.0", "NoeticTools.Git2SemVer.Tool.dll");
     }
+
+    protected abstract string SolutionFolderName { get; }
+
+    protected abstract string SolutionName { get; }
 
     protected static void DeleteAllNuGetPackages(string packageOutputDir)
     {
@@ -61,4 +58,8 @@ internal abstract class SolutionTestsBase : ScriptingTestsBase
         var returnCode = process.Run("dotnet", $"{_git2SemVerToolPath} {commandLineArguments}", out var standardOutput);
         return (returnCode, standardOutput);
     }
+
+    protected string TestSolutionDirectory = "";
+    protected string TestSolutionPath = "";
+    protected string BuildConfiguration = "";
 }

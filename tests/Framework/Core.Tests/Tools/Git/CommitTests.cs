@@ -13,12 +13,6 @@ internal class CommitTests
 {
     private Mock<ITagParser> _tagParser;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _tagParser = new Mock<ITagParser>();
-    }
-
     [Test]
     public void CommitTest()
     {
@@ -103,5 +97,11 @@ internal class CommitTests
         Assert.That(target.TagMetadata.ChangeFlags.BreakingChange, Is.False);
         Assert.That(target.TagMetadata.ChangeFlags.FunctionalityChange, Is.False);
         Assert.That(target.TagMetadata.ChangeFlags.Fix, Is.False);
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _tagParser = new Mock<ITagParser>();
     }
 }

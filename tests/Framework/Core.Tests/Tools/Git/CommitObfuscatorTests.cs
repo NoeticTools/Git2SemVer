@@ -9,12 +9,6 @@ internal class CommitObfuscatorTests
 {
     private CommitObfuscator _target;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _target = new CommitObfuscator();
-    }
-
     [Test]
     public void FirstShaIs0001Test()
     {
@@ -51,5 +45,11 @@ internal class CommitObfuscatorTests
         var result = _target.GetObfuscatedSha(sha);
 
         Assert.That(result, Is.EqualTo(sha));
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _target = new CommitObfuscator();
     }
 }

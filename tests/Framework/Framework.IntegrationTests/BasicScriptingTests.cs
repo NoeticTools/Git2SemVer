@@ -51,6 +51,12 @@ public class BasicScriptingTests
 
     private sealed class BasicScriptingTestsContext : IDisposable
     {
+        public void Dispose()
+        {
+            ErrorWriter.Dispose();
+            OutputWriter.Dispose();
+        }
+
         public StringWriter ErrorWriter { get; }
 
         public StringWriter OutputWriter { get; }
@@ -61,12 +67,6 @@ public class BasicScriptingTests
             Console.SetOut(OutputWriter);
             ErrorWriter = new StringWriter();
             Console.SetError(ErrorWriter);
-        }
-
-        public void Dispose()
-        {
-            ErrorWriter.Dispose();
-            OutputWriter.Dispose();
         }
     }
 }
