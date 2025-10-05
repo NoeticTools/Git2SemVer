@@ -1,5 +1,4 @@
-﻿using NoeticTools.Git2SemVer.Core.FileSystem;
-using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
+﻿using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
 using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
@@ -21,6 +20,11 @@ public abstract class JsonSettingsFileBase<T>
         return config;
     }
 
+    public string ToJson()
+    {
+        return Git2SemVerJsonSerializer.Serialise(this);
+    }
+
     private static T Load(File file)
     {
         return Git2SemVerJsonSerializer.Read<T>(file);
@@ -30,10 +34,5 @@ public abstract class JsonSettingsFileBase<T>
     {
         var filePath = dataDirectory + filename;
         Git2SemVerJsonSerializer.Write(filePath, this);
-    }
-
-    public string ToJson()
-    {
-        return Git2SemVerJsonSerializer.Serialise(this);
     }
 }

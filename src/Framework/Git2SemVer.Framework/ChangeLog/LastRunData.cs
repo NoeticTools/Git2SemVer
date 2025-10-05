@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Diagnostics;
-using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using Semver;
 using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;

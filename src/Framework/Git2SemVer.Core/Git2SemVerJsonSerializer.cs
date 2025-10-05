@@ -1,6 +1,4 @@
-﻿using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
+﻿using System.Text.Json;
 using File = NoeticTools.Git2SemVer.Core.FileSystem.File;
 
 
@@ -9,6 +7,11 @@ namespace NoeticTools.Git2SemVer.Core;
 public static class Git2SemVerJsonSerializer
 {
     private static readonly Mutex FileMutex = new(false, "G2SemVerJsonFileMutex");
+
+    public static T Deserialise<T>(string json)
+    {
+        return JsonSerializer.Deserialize<T>(json, JsonConstants.SerialiseOptions)!;
+    }
 
     public static T Read<T>(File file) where T : new()
     {
@@ -29,11 +32,6 @@ public static class Git2SemVerJsonSerializer
         {
             FileMutex.ReleaseMutex();
         }
-    }
-
-    public static T Deserialise<T>(string json)
-    {
-        return JsonSerializer.Deserialize<T>(json, JsonConstants.SerialiseOptions)!;
     }
 
     public static string Serialise(object target)

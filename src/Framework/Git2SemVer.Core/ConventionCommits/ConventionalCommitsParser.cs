@@ -1,5 +1,5 @@
-﻿using NoeticTools.Git2SemVer.Core.Extensions;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using NoeticTools.Git2SemVer.Core.Extensions;
 
 
 namespace NoeticTools.Git2SemVer.Core.ConventionCommits;

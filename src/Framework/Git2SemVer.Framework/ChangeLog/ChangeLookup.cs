@@ -31,6 +31,8 @@ internal abstract class ChangeLookup<T>
         return TryGet(GetKeys(changeMetadata), out value);
     }
 
+    protected abstract IChangeTypeAndDescription ToChangeMetadata(T item);
+
     private T this[(string changeType, string description) key] => _inner[key.changeType][key.description];
 
     private void Add((string changeType, string description) key, T value)
@@ -80,6 +82,4 @@ internal abstract class ChangeLookup<T>
         value = default;
         return false;
     }
-
-    protected abstract IChangeTypeAndDescription ToChangeMetadata(T item);
 }

@@ -62,6 +62,16 @@ internal abstract class BuildHostBase
         _logger.LogTrace("{0} host does not support setting a build label. Ignored.", Name);
     }
 
+    protected Func<IReadOnlyList<string>> DefaultBuildNumberFunc
+    {
+        get => _defaultBuildNumberFunc;
+        set
+        {
+            _defaultBuildNumberFunc = value;
+            SetBuildIdFunc();
+        }
+    }
+
     private string[] CustomBuildIdFormat()
     {
         if (string.IsNullOrWhiteSpace(BuildIdFormat))
@@ -77,15 +87,5 @@ internal abstract class BuildHostBase
     private void SetBuildIdFunc()
     {
         _buildNumberFunc = BuildIdFormat.Length > 0 ? CustomBuildIdFormat : DefaultBuildNumberFunc;
-    }
-
-    protected Func<IReadOnlyList<string>> DefaultBuildNumberFunc
-    {
-        get => _defaultBuildNumberFunc;
-        set
-        {
-            _defaultBuildNumberFunc = value;
-            SetBuildIdFunc();
-        }
     }
 }

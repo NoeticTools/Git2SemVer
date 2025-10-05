@@ -37,7 +37,7 @@ public sealed class ConventionalCommitsSettings : JsonSettingsFileBase<Conventio
 
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is ConventionalCommitsSettings other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is ConventionalCommitsSettings other && Equals(other));
     }
 
     public override int GetHashCode()

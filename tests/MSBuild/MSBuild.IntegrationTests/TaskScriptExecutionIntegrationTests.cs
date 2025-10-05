@@ -2,6 +2,7 @@
 using NoeticTools.Git2SemVer.Framework.Versioning;
 using NoeticTools.Git2SemVer.Framework.Versioning.Builders.Scripting;
 using NoeticTools.Git2SemVer.IntegrationTests.Framework;
+using NoeticTools.Git2SemVer.Testing.Core;
 
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

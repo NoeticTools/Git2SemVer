@@ -7,6 +7,8 @@ namespace NoeticTools.Git2SemVer.Core;
 
 public static class JsonConstants
 {
+    public static readonly TimeSpan ReadTimeLimit = TimeSpan.FromSeconds(10);
+
     public static readonly JsonSerializerOptions SerialiseOptions = new()
     {
         WriteIndented = true,
@@ -17,7 +19,4 @@ public static class JsonConstants
     };
 
     public static readonly TimeSpan WriteTimeLimit = TimeSpan.FromSeconds(10);
-
-    public static readonly TimeSpan ReadTimeLimit = TimeSpan.FromSeconds(10);
-
 }

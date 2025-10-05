@@ -1,6 +1,5 @@
 ﻿using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Exceptions;
-using NoeticTools.Git2SemVer.Core.FileSystem;
 using NoeticTools.Git2SemVer.Core.Logging;
 using Directory = NoeticTools.Git2SemVer.Core.FileSystem.Directory;
 
@@ -30,7 +29,8 @@ public sealed class ChangelogTemplateReader(ILogger logger)
                                    .SingleOrDefault(path => path.EndsWith(ChangelogConstants.DefaultMarkdownTemplateFilename))!;
         if (resourcePath == null)
         {
-            throw new Git2SemVerOperationException($"The code resource file '{ChangelogConstants.DefaultMarkdownTemplateFilename}' is required but not found.");
+            throw new
+                Git2SemVerOperationException($"The code resource file '{ChangelogConstants.DefaultMarkdownTemplateFilename}' is required but not found.");
         }
 
         return assembly.GetResourceFileContent(resourcePath!)!;

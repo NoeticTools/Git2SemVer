@@ -41,6 +41,26 @@ public sealed class Directory(string path) : IEquatable<Directory>
         WaitUntil(() => !Exists());
     }
 
+    public bool Equals(Directory? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return _path == other._path;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || (obj is Directory other && Equals(other));
+    }
+
     public bool Exists()
     {
         return IsEmptyPath || System.IO.Directory.Exists(_path);
@@ -55,6 +75,11 @@ public sealed class Directory(string path) : IEquatable<Directory>
 
         var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
         return System.IO.Directory.GetFiles(_path, pattern, searchOption).Select(x => new File(x)).ToList();
+    }
+
+    public override int GetHashCode()
+    {
+        return _path.GetHashCode();
     }
 
     public static File operator +(Directory left, File right)
@@ -137,30 +162,5 @@ public sealed class Directory(string path) : IEquatable<Directory>
         }
 
         return true;
-    }
-
-    public bool Equals(Directory? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return _path == other._path;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return ReferenceEquals(this, obj) || obj is Directory other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return _path.GetHashCode();
     }
 }

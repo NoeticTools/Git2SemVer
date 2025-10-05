@@ -23,6 +23,19 @@ public abstract class MsBuildGroupBase<T>
 
     public T this[string name] => GetItem(name);
 
+    protected abstract T CreateItem(XElement element);
+
+    protected T GetItem(string name)
+    {
+        if (_cache.TryGetValue(name, out var property))
+        {
+            return property;
+        }
+
+        var element = _groupElements.Elements().FirstOrDefault(x => x.Name == name);
+        return element == null ? Add(name, "") : Add(name, element);
+    }
+
     private T Add(string name, XElement element)
     {
         var property = CreateItem(element);
@@ -52,18 +65,5 @@ public abstract class MsBuildGroupBase<T>
         }
 
         return groups;
-    }
-
-    protected abstract T CreateItem(XElement element);
-
-    protected T GetItem(string name)
-    {
-        if (_cache.TryGetValue(name, out var property))
-        {
-            return property;
-        }
-
-        var element = _groupElements.Elements().FirstOrDefault(x => x.Name == name);
-        return element == null ? Add(name, "") : Add(name, element);
     }
 }

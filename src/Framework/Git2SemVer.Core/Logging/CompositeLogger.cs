@@ -115,6 +115,7 @@ public sealed class CompositeLogger : ILogger
         {
             message += $"\nInner exception: {exception.InnerException.Message}";
         }
+
         _errorMessages.Add(message);
         _loggers.ForEach(logger => logger.LogError(exception));
     }

@@ -36,8 +36,10 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
 
             var changelogGenerator = new ChangelogGenerator(logger);
             var changelog = changelogGenerator.Execute(versioningResult,
-                                                       cmdLineSettings.DataDirectory, 
-                                                       Environment.CurrentDirectory, cmdLineSettings.NoFileWrites ?? false, cmdLineSettings.ArtifactLinkPattern, cmdLineSettings.OutputFilePath, cmdLineSettings.ReleaseAs);
+                                                       cmdLineSettings.DataDirectory,
+                                                       Environment.CurrentDirectory, cmdLineSettings.NoFileWrites ?? false,
+                                                       cmdLineSettings.ArtifactLinkPattern, cmdLineSettings.OutputFilePath,
+                                                       cmdLineSettings.ReleaseAs);
 
             if (string.Equals(priorChangelog, changelog, StringComparison.Ordinal))
             {
@@ -74,7 +76,7 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
         }
     }
 
-    private VersioningOutputs RunVersionGenerator(ChangelogCommandSettings cmdLineSettings, 
+    private VersioningOutputs RunVersionGenerator(ChangelogCommandSettings cmdLineSettings,
                                                   ConventionalCommitsSettings convCommits)
     {
         var inputs = new VersionGeneratorInputs

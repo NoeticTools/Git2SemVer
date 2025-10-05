@@ -11,19 +11,6 @@ internal abstract class CommandBase(IConsoleIO console)
 {
     public bool HasError => Console.HasError;
 
-    protected readonly IConsoleIO Console = console;
-
-    protected LoggingLevel GetVerbosity(string verbosity)
-    {
-        if (Enum.TryParse(verbosity, true, out LoggingLevel level))
-        {
-            return level;
-        }
-
-        Console.WriteErrorLine($"Verbosity {verbosity} is not valid. Must be 'Trace', 'Debug', 'Info', 'Warning', or 'Error'.");
-        return LoggingLevel.Info;
-    }
-
     protected CompositeLogger CreateLogger(string verbosity = "info")
     {
         CompositeLogger? logger = null;
@@ -53,4 +40,17 @@ internal abstract class CommandBase(IConsoleIO console)
                     inputs.BuildIdFormat);
         return host;
     }
+
+    protected LoggingLevel GetVerbosity(string verbosity)
+    {
+        if (Enum.TryParse(verbosity, true, out LoggingLevel level))
+        {
+            return level;
+        }
+
+        Console.WriteErrorLine($"Verbosity {verbosity} is not valid. Must be 'Trace', 'Debug', 'Info', 'Warning', or 'Error'.");
+        return LoggingLevel.Info;
+    }
+
+    protected readonly IConsoleIO Console = console;
 }

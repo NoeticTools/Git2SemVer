@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using NoeticTools.Git2SemVer.Core.ConventionCommits;
+﻿using NoeticTools.Git2SemVer.Core.ConventionCommits;
 using Semver;
 
 
@@ -61,7 +60,7 @@ public static class SemVersionExtensions
         var abbreviatedSha = sha.Length > 7 ? sha.Substring(0, 7) : sha;
 
         var newMetadata = semver.MetadataIdentifiers
-                                .Take(semver.MetadataIdentifiers.Count-1)
+                                .Take(semver.MetadataIdentifiers.Count - 1)
                                 .Append(new MetadataIdentifier(abbreviatedSha));
         return semver.WithMetadata(newMetadata);
     }

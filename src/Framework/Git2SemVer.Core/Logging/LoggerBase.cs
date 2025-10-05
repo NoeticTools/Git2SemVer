@@ -26,13 +26,6 @@ public abstract class LoggerBase
         return Level >= level;
     }
 
-    private void LeaveLogScope()
-    {
-        MessagePrefix = MessagePrefix.Substring(0, MessagePrefix.Length - LogScopeIndent.Length);
-    }
-
-    protected readonly List<string> ErrorMessages = [];
-
     protected string IndentLines(string message)
     {
         return IndentLines(message, MessagePrefix, MessagePrefix);
@@ -43,4 +36,11 @@ public abstract class LoggerBase
         var lines = Regex.Split(message, "\r\n|\r|\n");
         return firstLinePrefix + MessagePrefix + string.Join(Environment.NewLine + followingLinesPrefix + MessagePrefix, lines);
     }
+
+    private void LeaveLogScope()
+    {
+        MessagePrefix = MessagePrefix.Substring(0, MessagePrefix.Length - LogScopeIndent.Length);
+    }
+
+    protected readonly List<string> ErrorMessages = [];
 }

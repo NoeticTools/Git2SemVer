@@ -8,15 +8,6 @@ namespace NoeticTools.Git2SemVer.Tool.CommandLine.Changelog;
 
 internal abstract class CliCommandBase<T> : Command<T> where T : CommandSettings
 {
-    protected static void Validate(CommandContext context)
-    {
-        var remainingParsed = context.Remaining.Parsed;
-        if (remainingParsed.Any())
-        {
-            throw new Git2SemVerUnknownCommandOptionException($"Unknown command argument '{remainingParsed.First().Key}'");
-        }
-    }
-
     protected static ICommandFactory GetCommandFactory(CommandContext context, CommonCommandSettings settings)
     {
         var serviceProvider = (IServiceProvider)context.Data!;
@@ -24,5 +15,14 @@ internal abstract class CliCommandBase<T> : Command<T> where T : CommandSettings
         console.Unattended = settings.Unattended;
         var commandFactory = serviceProvider.GetService<ICommandFactory>()!;
         return commandFactory;
+    }
+
+    protected static void Validate(CommandContext context)
+    {
+        var remainingParsed = context.Remaining.Parsed;
+        if (remainingParsed.Any())
+        {
+            throw new Git2SemVerUnknownCommandOptionException($"Unknown command argument '{remainingParsed.First().Key}'");
+        }
     }
 }

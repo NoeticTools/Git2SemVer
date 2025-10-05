@@ -1,6 +1,6 @@
 using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Tools;
-using NoeticTools.Git2SemVer.IntegrationTests.Framework;
+using NoeticTools.Git2SemVer.Testing.Core;
 
 
 #pragma warning disable NUnit2045

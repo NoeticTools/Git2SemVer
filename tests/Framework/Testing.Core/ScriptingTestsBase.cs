@@ -5,10 +5,9 @@ using NoeticTools.Git2SemVer.Core.Tools;
 using NoeticTools.Git2SemVer.Core.Tools.DotnetCli;
 using NoeticTools.Git2SemVer.Core.Tools.Git;
 using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
-using NoeticTools.Git2SemVer.Testing.Core;
 
 
-namespace NoeticTools.Git2SemVer.IntegrationTests.Framework;
+namespace NoeticTools.Git2SemVer.Testing.Core;
 
 [NonParallelizable]
 public abstract class ScriptingTestsBase : TestFixtureBase
