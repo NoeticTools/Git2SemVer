@@ -1,8 +1,8 @@
-﻿using NoeticTools.Git2SemVer.Core.Logging;
+﻿using System.Text.RegularExpressions;
+using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Framework.Config;
 using NoeticTools.Git2SemVer.IntegrationTests.Framework;
-using System.Text.RegularExpressions;
 
 
 namespace NoeticTools.Git2SemVer.IntegrationTests.Building;
@@ -29,8 +29,8 @@ public class UncontrolledHostBuildTests
     {
         var config = Git2SemVerLocalSettings.Load();
         using var context = CreateTestContext();
-        var logger = new CompositeLogger(context.Logger);
-        var host = new BuildHost(new BuildHostFinder(config, new TeamCityWriterFactoryStub().Create(), logger).Find(""), logger);
+        using var logger = new CompositeLogger(context.Logger);
+        using var host = new BuildHost(new BuildHostFinder(config, new TeamCityWriterFactoryStub().Create(), logger).Find(""), logger);
 
         Assert.That(host.HostTypeId, Is.EqualTo(HostTypeIds.Uncontrolled));
         Assert.That(int.Parse(host.BuildNumber), Is.GreaterThan(0));
@@ -39,11 +39,12 @@ public class UncontrolledHostBuildTests
         Assert.That(host.BuildId, Is.EqualTo(new[] { Environment.MachineName, config.BuildNumber.ToString() }));
     }
 
-    private static int RebuildAndRun(VersioningBuildTestContext context)
+    private static VersioningBuildTestContext CreateTestContext()
     {
-        context.DotNetCliBuildTestSolution("--no-incremental");
-        var output = DotNetProcessHelpers.RunDotnetApp(context.CompiledAppPath, context.Logger);
-        return GetBuildNumber(output);
+        return new VersioningBuildTestContext(groupName: "UncontrolledHost",
+                                              solutionFolderName: "StandAloneTestSolution",
+                                              solutionFileName: "StandAloneVersioning.sln",
+                                              projectName: "TestApplication");
     }
 
     private static int GetBuildNumber(string output)
@@ -54,9 +55,10 @@ public class UncontrolledHostBuildTests
         return int.Parse(match.Groups["build_number"].Value);
     }
 
-    private static VersioningBuildTestContext CreateTestContext()
+    private static int RebuildAndRun(VersioningBuildTestContext context)
     {
-        return new VersioningBuildTestContext("UncontrolledHost", "StandAloneTestSolution",
-                                              "StandAloneVersioning.sln", "TestApplication");
+        context.DotNetCliBuildTestSolution("--no-incremental");
+        var output = DotNetProcessHelpers.RunDotnetApp(context.CompiledAppPath, context.Logger);
+        return GetBuildNumber(output);
     }
 }

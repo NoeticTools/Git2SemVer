@@ -12,30 +12,7 @@ internal class ScriptExecutionIntegrationTests : ScriptingTestsBase
 {
     private const string TestScriptFilename = "TestScript.csx";
     private BuildEngine9Stub _buildEngine;
-    private Dictionary<string, string> _globalProperties;
     private MSBuildGlobalProperties _msBuildGlobalProperties;
-
-    [OneTimeSetUp]
-    public void OneTimeSetup()
-    {
-        OneTimeSetUpBase();
-    }
-
-    [OneTimeTearDown]
-    public void OneTimeTearDown()
-    {
-        OneTimeTearDownBase();
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        SetUpBase();
-
-        _globalProperties = new Dictionary<string, string>();
-        _buildEngine = new BuildEngine9Stub(_globalProperties);
-        _msBuildGlobalProperties = new MSBuildGlobalProperties(_buildEngine);
-    }
 
     [Test]
     [MaxTime(10000)]
@@ -71,6 +48,27 @@ internal class ScriptExecutionIntegrationTests : ScriptingTestsBase
         runner.Build(context.Host, Git, context.Inputs, context.Outputs, _msBuildGlobalProperties);
 
         Assert.That(Logger.HasError, Is.False);
+    }
+
+    [OneTimeSetUp]
+    public void OneTimeSetup()
+    {
+        OneTimeSetUpBase();
+    }
+
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        OneTimeTearDownBase();
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        SetUpBase();
+
+        _buildEngine = new BuildEngine9Stub(new Dictionary<string, string>());
+        _msBuildGlobalProperties = new MSBuildGlobalProperties(_buildEngine);
     }
 
     private VersioningContext GetContext(string hostBuildNumber,
