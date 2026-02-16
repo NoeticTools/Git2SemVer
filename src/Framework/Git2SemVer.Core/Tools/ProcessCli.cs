@@ -66,7 +66,7 @@ public sealed class ProcessCli : IProcessCli
                 process.StartInfo.WorkingDirectory = WorkingDirectory;
             }
 
-            if (standardOut != null)
+            //if (standardOut != null)
             {
                 process.StartInfo.RedirectStandardOutput = true;
             }
@@ -79,7 +79,9 @@ public sealed class ProcessCli : IProcessCli
 
             process.Start();
 
-            standardOut?.Write(process.StandardOutput.ReadToEnd());
+            var stdOut = process.StandardOutput.ReadToEnd();
+            Logger.LogInfo(stdOut);
+            standardOut?.Write(stdOut/*process.StandardOutput.ReadToEnd()*/);
 
             if (errorOut != null)
             {
@@ -110,7 +112,6 @@ public sealed class ProcessCli : IProcessCli
                 return exitCode;
             }
 
-            Logger.LogInfo(process.StandardOutput.ReadToEnd());
             OnError(errorOut, $"ProcessCli Run returned non-zero exit code {exitCode}.");
             return exitCode;
         }
