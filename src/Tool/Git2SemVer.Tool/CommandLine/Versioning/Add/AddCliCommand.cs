@@ -8,7 +8,7 @@ namespace NoeticTools.Git2SemVer.Tool.CommandLine.Versioning.Add;
 
 internal class AddCliCommand : CliCommandBase<SolutionCommandSettings>
 {
-    public override int Execute(CommandContext context, SolutionCommandSettings settings)
+    protected override int Execute(CommandContext context, SolutionCommandSettings settings, CancellationToken cancellationToken)
     {
         Validate(context);
         if (!settings.Validate().Successful)

@@ -4,7 +4,6 @@ using NoeticTools.Git2SemVer.Core.Tools.Git;
 using NoeticTools.Git2SemVer.Framework.ChangeLogging;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Generation.Builders;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 using NoeticTools.Git2SemVer.Framework.Generation.GitHistoryWalking;
 using NoeticTools.Git2SemVer.Framework.Persistence;
 
@@ -18,8 +17,6 @@ internal sealed class VersioningEngine(
     IGitTool gitTool,
     IGitHistoryWalker gitWalker,
     IDefaultVersionBuilderFactory defaultVersionBuilderFactory,
-    IVersionBuilder scriptBuilder,
-    IMSBuildGlobalProperties msBuildGlobalProperties,
     ILogger logger)
     : IVersioningEngine
 {
@@ -60,7 +57,17 @@ internal sealed class VersioningEngine(
                                                         results.PriorReleaseCommitId,
                                                         results.PriorVersions),
                                          results.Version);
-        RunBuilders(outputs);
+
+        using (logger.EnterLogScope())
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            var defaultBuilder = defaultVersionBuilderFactory.Create(outputs.Version!);
+            defaultBuilder.Build(host, gitTool, inputs, outputs);
+
+            stopwatch.Stop();
+            logger.LogDebug($"Version building completed (in {stopwatch.Elapsed.TotalSeconds:F1} sec).");
+        }
 
         if (inputs.WriteConventionalCommitsInfo)
         {
@@ -68,23 +75,6 @@ internal sealed class VersioningEngine(
         }
 
         return (outputs, results);
-    }
-
-    private void RunBuilders(VersionOutputs outputs)
-    {
-        logger.LogDebug("Running version builders.");
-        using (logger.EnterLogScope())
-        {
-            var stopwatch = Stopwatch.StartNew();
-
-            var defaultBuilder = defaultVersionBuilderFactory.Create(outputs.Version!);
-            defaultBuilder.Build(host, gitTool, inputs, outputs, msBuildGlobalProperties);
-
-            scriptBuilder.Build(host, gitTool, inputs, outputs, msBuildGlobalProperties);
-
-            stopwatch.Stop();
-            logger.LogDebug($"Version building completed (in {stopwatch.Elapsed.TotalSeconds:F1} sec).");
-        }
     }
 
     private void SaveConventionalCommitsInfo(VersionOutputs outputs, ContributingCommits contributing)

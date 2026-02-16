@@ -7,7 +7,7 @@ namespace NoeticTools.Git2SemVer.Tool.CommandLine.Changelog;
 
 internal class ChangelogCliCommand : CliCommandBase<ChangelogCommandSettings>
 {
-    public override int Execute(CommandContext context, ChangelogCommandSettings settings)
+    protected override int Execute(CommandContext context, ChangelogCommandSettings settings, CancellationToken cancellationToken)
     {
         Validate(context);
         if (!settings.Validate().Successful)

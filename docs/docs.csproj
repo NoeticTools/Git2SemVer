@@ -19,7 +19,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dhgms.DocFx.MermaidJs.Plugin" Version="4.0.1" />
+    <PackageReference Include="Dhgms.DocFx.MermaidJs.Plugin" Version="4.0.25" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="articles\v4\" />
+    <Folder Include="articles\v3\" />
+    <Folder Include="Images\v4\" />
   </ItemGroup>
 
 </Project>

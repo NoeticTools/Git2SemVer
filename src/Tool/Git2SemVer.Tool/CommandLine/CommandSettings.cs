@@ -7,7 +7,7 @@ using Spectre.Console.Cli;
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine;
 
-public class CommonCommandSettings : CommandSettings
+internal class CommonCommandSettings : CommandSettings
 {
     [CommandOption("-u|--unattended")]
     [Description("Run unattended. If used, does not ask user before operation is performed and choices defaults are used.")]

@@ -3,7 +3,7 @@
 
 namespace NoeticTools.Git2SemVer.Tool.MSBuild.Projects.Elements;
 
-public sealed class PropertyElement
+internal sealed class PropertyElement
 {
     private readonly XElement _element;
 

@@ -8,7 +8,7 @@ namespace NoeticTools.Git2SemVer.Tool.CommandLine.Versioning.Run;
 
 internal sealed class RunCliCommand : CliCommandBase<RunCommandSettings>
 {
-    public override int Execute(CommandContext context, RunCommandSettings settings)
+    protected override int Execute(CommandContext context, RunCommandSettings settings, CancellationToken cancellationToken)
     {
         Validate(context);
         if (!settings.Validate().Successful)

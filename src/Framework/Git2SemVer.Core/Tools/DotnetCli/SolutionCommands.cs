@@ -37,12 +37,12 @@ public sealed class SolutionCommands : ISolutionCommands
 
     public void New(string solutionName)
     {
-        _inner.Run($"new sln --name \"{solutionName}\"");
+        _inner.Run($"new sln --name \"{solutionName}\" --format sln");
     }
 
     public void New()
     {
-        _inner.Run("new sln");
+        _inner.Run("new sln --format sln");
     }
 
     public (int returnCode, string stdOutput) RemoveProject(string projectName)

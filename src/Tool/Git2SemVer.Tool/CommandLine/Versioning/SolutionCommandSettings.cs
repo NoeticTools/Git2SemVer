@@ -7,7 +7,7 @@ using Spectre.Console.Cli;
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine.Versioning;
 
-public class SolutionCommandSettings : CommonCommandSettings
+internal class SolutionCommandSettings : CommonCommandSettings
 {
     [CommandOption("-s|--solution")]
     [DefaultValue("")]

@@ -3,7 +3,6 @@ using NoeticTools.Git2SemVer.Core.ConventionCommits;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework.Framework.Config;
 using NoeticTools.Git2SemVer.Framework.Generation;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 using NoeticTools.Git2SemVer.Framework.Persistence;
 using NoeticTools.Git2SemVer.Framework.Tools.CI;
 
@@ -17,7 +16,6 @@ public sealed class ProjectVersioningFactory(
     ILogger logger)
 {
     public ProjectVersioning Create(IVersionGeneratorInputs inputs,
-                                    IMSBuildGlobalProperties msBuildGlobalProperties,
                                     IOutputsJsonIO? outputsJsonIO = null,
                                     IConfiguration? config = null)
     {
@@ -34,7 +32,7 @@ public sealed class ProjectVersioningFactory(
                                                                             inputs.BuildContext,
                                                                             inputs.BuildIdFormat);
         var convCommitSettings = new ConventionalCommitsSettings();
-        var versionGenerator = versioningEngineFactory.Create(inputs, msBuildGlobalProperties, outputsJsonIO, host, convCommitSettings);
+        var versionGenerator = versioningEngineFactory.Create(inputs, outputsJsonIO, host, convCommitSettings);
         var projectVersioning = new ProjectVersioning(inputs, host,
                                                       outputsJsonIO,
                                                       versionGenerator,

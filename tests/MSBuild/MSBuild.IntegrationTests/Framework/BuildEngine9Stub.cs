@@ -4,7 +4,7 @@ using Microsoft.Build.Framework;
 
 namespace NoeticTools.Git2SemVer.IntegrationTests.Framework;
 
-internal class BuildEngine9Stub : IBuildEngine9
+internal class BuildEngine9Stub : IBuildEngine6
 {
     private readonly IReadOnlyDictionary<string, string> _globalProperties;
 

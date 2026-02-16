@@ -4,7 +4,7 @@ using NoeticTools.Git2SemVer.Core.Logging;
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine.Changelog;
 
-public sealed class ChangelogRunCommandSettingsValidator : AbstractValidator<ChangelogCommandSettings>
+internal sealed class ChangelogRunCommandSettingsValidator : AbstractValidator<ChangelogCommandSettings>
 {
     public ChangelogRunCommandSettingsValidator()
     {

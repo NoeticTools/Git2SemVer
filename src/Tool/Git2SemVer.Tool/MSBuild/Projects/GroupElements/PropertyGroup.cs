@@ -4,7 +4,7 @@ using NoeticTools.Git2SemVer.Tool.MSBuild.Projects.Elements;
 
 namespace NoeticTools.Git2SemVer.Tool.MSBuild.Projects.GroupElements;
 
-public sealed class PropertyGroup : MsBuildGroupBase<PropertyElement>
+internal sealed class PropertyGroup : MsBuildGroupBase<PropertyElement>
 {
     public PropertyGroup(XDocument xmlDocument)
         : base(xmlDocument, "PropertyGroup")

@@ -3,7 +3,9 @@ using NoeticTools.Git2SemVer.Core;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Core.Tools;
 using NoeticTools.Git2SemVer.Core.Tools.DotnetCli;
+using NoeticTools.Git2SemVer.IntegrationTests.Framework;
 using NoeticTools.Git2SemVer.Testing.Core;
+using Semver;
 
 
 #pragma warning disable NUnit2045
@@ -69,13 +71,6 @@ internal sealed class VersioningBuildTestContext : IDisposable
         Assert.That(foundFiles.Length, Is.EqualTo(1), $"File '{expectedFilename}' does not exist.");
     }
 
-    public string DeployScript(string scriptFilename)
-    {
-        var scriptPath = Path.Combine(TestDirectory.FullName, scriptFilename);
-        GetType().Assembly.WriteResourceFile(scriptFilename, scriptPath);
-        return scriptPath;
-    }
-
     public void Dispose()
     {
         _activeContexts--;
@@ -94,6 +89,15 @@ internal sealed class VersioningBuildTestContext : IDisposable
         var returnCode = DotNetCli.Pack(TestSolutionPath, BuildConfiguration, "--no-restore --no-build");
         Assert.That(returnCode, Is.EqualTo(0));
         Assert.That(Logger.HasError, Is.False);
+    }
+
+    public SemVersion GetInfoVersionFromAppOutput(string reportOutput)
+    {
+        var versionLine = reportOutput.Split(Environment.NewLine)
+                                      .FirstOrDefault(line => line.StartsWith("Informational version:", StringComparison.Ordinal));
+        Assert.That(versionLine, Is.Not.Null, "Informational version line not found in application output.");
+        var versionString = versionLine["Informational version:".Length..]!.Trim();
+        return SemVersion.Parse(versionString, SemVersionStyles.Any);
     }
 
     public void ShowVersioningReport()

@@ -8,7 +8,7 @@ using Spectre.Console.Cli;
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine.Changelog;
 
-public class ChangelogCommandSettings : CommonCommandSettings
+internal class ChangelogCommandSettings : CommonCommandSettings
 {
     [CommandOption("-a|--artifact-url <URL>")]
     [Description("Optional url to a version's artifacts. May contain version placeholder '%VERSION%'.")]

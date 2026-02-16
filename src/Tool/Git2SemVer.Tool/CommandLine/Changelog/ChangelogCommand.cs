@@ -4,7 +4,6 @@ using NoeticTools.Git2SemVer.Core.Diagnostics;
 using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework.ChangeLogging;
 using NoeticTools.Git2SemVer.Framework.Generation;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 using NoeticTools.Git2SemVer.Framework.Persistence;
 using NoeticTools.Git2SemVer.Tool.CommandLine.Versioning.Run;
 
@@ -149,7 +148,6 @@ internal sealed class ChangelogCommand(IConsoleIO console, ILogger logger) : Com
         using var logger = CreateLogger(cmdLineSettings.Verbosity);
         var host = GetBuildHost(logger, inputs);
         var versionGenerator = new VersioningEngineFactory(logger).Create(inputs,
-                                                                          new NullMSBuildGlobalProperties(),
                                                                           new NullJsonFileIO(),
                                                                           host,
                                                                           projectSettings.ConvCommits);

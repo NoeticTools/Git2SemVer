@@ -1,6 +1,5 @@
 ﻿using NoeticTools.Git2SemVer.Core.Tools.Git;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 
 
 namespace NoeticTools.Git2SemVer.Framework.Generation.Builders;
@@ -10,6 +9,5 @@ namespace NoeticTools.Git2SemVer.Framework.Generation.Builders;
 /// </summary>
 public interface IVersionBuilder
 {
-    void Build(IBuildHost host, IGitTool gitTool, IVersionGeneratorInputs inputs, IVersionOutputs outputs,
-               IMSBuildGlobalProperties msBuildGlobalProperties);
+    void Build(IBuildHost host, IGitTool gitTool, IVersionGeneratorInputs inputs, IVersionOutputs outputs);
 }

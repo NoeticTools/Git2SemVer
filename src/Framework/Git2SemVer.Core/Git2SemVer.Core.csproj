@@ -39,9 +39,9 @@
     <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
     <PackageReference Include="NoeticTools.JsonPeek" Version="1.0.2" />
     <PackageReference Include="Semver" Version="[2.3.0]" />
-    <PackageReference Include="Injectio" Version="5.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.50.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.7" />
+    <PackageReference Include="Injectio" Version="5.1.0" />
+    <PackageReference Include="Spectre.Console" Version="0.54.1-alpha.0.10" />
+    <PackageReference Include="System.Text.Json" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,7 +7,6 @@ using NoeticTools.Git2SemVer.Core.Logging;
 using NoeticTools.Git2SemVer.Framework;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Generation;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 using ILogger = NoeticTools.Git2SemVer.Core.Logging.ILogger;
 
 
@@ -114,7 +113,6 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
     ///         MSBuild task input.
     ///     </para>
     /// </remarks>
-    [Required]
     public string BuildScriptPath { get; set; } = "";
 
     /// <summary>
@@ -330,7 +328,7 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
             var versioningEngineFactory = new VersioningEngineFactory(logger);
             using var projectVersioning =
                 new ProjectVersioningFactory(msg => Log.LogMessage(MessageImportance.High, msg), versioningEngineFactory, logger)
-                    .Create(this, new MSBuildGlobalProperties(BuildEngine6));
+                    .Create(this);
             SetOutputs(projectVersioning.Run());
             return !Log.HasLoggedErrors;
         }
@@ -359,19 +357,12 @@ public class Git2SemVerGenerateVersionTask : Git2SemVerTaskBase, IVersionGenerat
             throw new ArgumentNullException(nameof(logger), "Logger is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(BuildScriptPath))
+        if (!string.IsNullOrWhiteSpace(BuildScriptPath) || RunScript is not null)
         {
-            logger.LogError(new GSV002());
-            return false;
+            logger.LogError(new GSV007());
         }
 
-        if (RunScript is not true || File.Exists(BuildScriptPath))
-        {
-            return true;
-        }
-
-        logger.LogError(new GSV004(BuildScriptPath));
-        return false;
+        return true;
     }
 
     private static T GetCustomAttribute<T>(Assembly assembly) where T : class

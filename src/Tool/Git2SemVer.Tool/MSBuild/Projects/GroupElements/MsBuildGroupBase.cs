@@ -7,7 +7,7 @@ using NoeticTools.Git2SemVer.Core.Exceptions;
 
 namespace NoeticTools.Git2SemVer.Tool.MSBuild.Projects.GroupElements;
 
-public abstract class MsBuildGroupBase<T>
+internal abstract class MsBuildGroupBase<T>
 {
     private readonly Dictionary<string, T> _cache = [];
     private readonly string _groupElementName;

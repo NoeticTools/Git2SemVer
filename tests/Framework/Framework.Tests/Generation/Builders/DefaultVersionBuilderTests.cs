@@ -5,7 +5,6 @@ using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Framework.Semver;
 using NoeticTools.Git2SemVer.Framework.Generation;
 using NoeticTools.Git2SemVer.Framework.Generation.Builders;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 using NoeticTools.Git2SemVer.Testing.Core;
 using Semver;
 
@@ -22,7 +21,6 @@ internal class DefaultVersionBuilderTests
     private Mock<IBuildHost> _host;
     private Mock<IVersionGeneratorInputs> _inputs;
     private NUnitLogger _logger;
-    private Mock<IMSBuildGlobalProperties> _msBuildGlobalProperties;
     private Mock<IVersionOutputs> _outputs;
     private SemVersion _version = null!;
 
@@ -40,7 +38,6 @@ internal class DefaultVersionBuilderTests
         _gitOutputs = new Mock<IGitOutputs>();
         _outputs = new Mock<IVersionOutputs>();
         _git = new Mock<IGitTool>();
-        _msBuildGlobalProperties = new Mock<IMSBuildGlobalProperties>();
 
         _host.Setup(x => x.BuildNumber).Returns(BuildNumber);
         _host.Setup(x => x.BuildContext).Returns("BUILD_CONTEXT");
@@ -76,7 +73,7 @@ internal class DefaultVersionBuilderTests
     {
         var target = SetupInputs(version, branchName);
 
-        target.Build(_host.Object, _git.Object, _inputs.Object, _outputs.Object, _msBuildGlobalProperties.Object);
+        target.Build(_host.Object, _git.Object, _inputs.Object, _outputs.Object);
 
         var expectedVersion = _version.WithPrerelease(expectedPrereleaseLabel, "77")
                                       .WithMetadata(branchName.ToNormalisedSemVerIdentifier(), "001");
@@ -94,7 +91,7 @@ internal class DefaultVersionBuilderTests
     {
         var target = SetupInputs(version, branchName);
 
-        target.Build(_host.Object, _git.Object, _inputs.Object, _outputs.Object, _msBuildGlobalProperties.Object);
+        target.Build(_host.Object, _git.Object, _inputs.Object, _outputs.Object);
 
         _outputs.VerifySet(x => x.BuildSystemVersion = _version.WithMetadata(BuildNumber), Times.Once);
         _outputs.VerifySet(x => x.BuildSystemVersion = _version.WithoutMetadata(), Times.Never);

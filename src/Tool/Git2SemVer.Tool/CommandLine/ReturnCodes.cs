@@ -1,6 +1,6 @@
 ﻿namespace NoeticTools.Git2SemVer.Tool.CommandLine;
 
-public enum ReturnCodes
+internal enum ReturnCodes
 {
     Succeeded = 0,
     CommandLineParsingError = 1,

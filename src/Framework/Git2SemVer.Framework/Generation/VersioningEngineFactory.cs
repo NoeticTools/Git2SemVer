@@ -5,7 +5,6 @@ using NoeticTools.Git2SemVer.Core.Tools.Git;
 using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
 using NoeticTools.Git2SemVer.Framework.Framework.BuildHosting;
 using NoeticTools.Git2SemVer.Framework.Generation.Builders;
-using NoeticTools.Git2SemVer.Framework.Generation.Builders.Scripting;
 using NoeticTools.Git2SemVer.Framework.Generation.GitHistoryWalking;
 using NoeticTools.Git2SemVer.Framework.Persistence;
 
@@ -16,7 +15,6 @@ namespace NoeticTools.Git2SemVer.Framework.Generation;
 public sealed class VersioningEngineFactory(ILogger logger)
 {
     public IVersioningEngine Create(IVersionGeneratorInputs inputs,
-                                    IMSBuildGlobalProperties msBuildGlobalProperties,
                                     IOutputsJsonIO outputsJsonIO,
                                     IBuildHost host,
                                     ConventionalCommitsSettings convCommitsSettings)
@@ -29,15 +27,12 @@ public sealed class VersioningEngineFactory(ILogger logger)
         var gitPathsFinder = new GitHistoryWalker(gitTool, logger);
 
         var defaultBuilderFactory = new DefaultVersionBuilderFactory(logger);
-        var scriptBuilder = new ScriptVersionBuilder(logger);
         var versionGenerator = new VersioningEngine(inputs,
                                                     host,
                                                     outputsJsonIO,
                                                     gitTool,
                                                     gitPathsFinder,
                                                     defaultBuilderFactory,
-                                                    scriptBuilder,
-                                                    msBuildGlobalProperties,
                                                     logger);
         return versionGenerator;
     }

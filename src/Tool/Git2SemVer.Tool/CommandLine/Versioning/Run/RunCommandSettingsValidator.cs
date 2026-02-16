@@ -6,7 +6,7 @@ using NoeticTools.Git2SemVer.Core.Tools.Git.Parsers;
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine.Versioning.Run;
 
-public sealed class RunCommandSettingsValidator : AbstractValidator<RunCommandSettings>
+internal sealed class RunCommandSettingsValidator : AbstractValidator<RunCommandSettings>
 {
     public RunCommandSettingsValidator()
     {

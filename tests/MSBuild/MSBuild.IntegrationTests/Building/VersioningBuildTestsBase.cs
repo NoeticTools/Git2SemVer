@@ -1,4 +1,6 @@
-﻿using NoeticTools.Git2SemVer.IntegrationTests.Framework;
+﻿using NoeticTools.Git2SemVer.Framework.Framework.Semver;
+using NoeticTools.Git2SemVer.IntegrationTests.Framework;
+using Semver;
 
 
 namespace NoeticTools.Git2SemVer.IntegrationTests.Building;
@@ -11,18 +13,13 @@ internal abstract class VersioningBuildTestsBase
     {
         using var context = CreateTestContext();
 
-        var scriptPath = context.DeployScript("ForceProperties3.csx");
-        context.DotNetCliBuildTestSolution($"-p:Git2SemVer_ScriptPath={scriptPath}");
+        context.DotNetCliBuildTestSolution();
         context.PackTestSolution();
-        VersioningBuildTestContext.AssertFileExists(context.PackageOutputDir, "NoeticTools.TestApplication.1.2.3-alpha.nupkg");
 
         var output = DotNetProcessHelpers.RunDotnetApp(context.CompiledAppPath, context.Logger);
-        Assert.That(output, Does.Contain("""
-                                         Assembly version:       200.201.202.0
-                                         File version:           200.201.212
-                                         Informational version:  2.2.2-beta
-                                         Product version:        2.2.2-beta
-                                         """));
+        var infoVersion = context.GetInfoVersionFromAppOutput(output);
+        AssertOutputVersionVariations(infoVersion, output);
+        AssertNugetPackageExists(infoVersion, context);
     }
 
     [Test]
@@ -31,40 +28,50 @@ internal abstract class VersioningBuildTestsBase
     {
         using var context = CreateTestContext();
 
-        var scriptPath = context.DeployScript("ForceProperties3.csx");
-        context.DotNetCliBuildTestSolution($"-p:Git2SemVer_ScriptPath={scriptPath}");
+        context.DotNetCliBuildTestSolution();
 
         context.ShowVersioningReport();
 
         var output = DotNetProcessHelpers.RunDotnetApp(context.CompiledAppPath, context.Logger);
-        Assert.That(output, Does.Contain("""
-                                         Assembly version:       200.201.202.0
-                                         File version:           200.201.212
-                                         Informational version:  2.2.2-beta
-                                         Product version:        2.2.2-beta
-                                         """));
+        var infoVersion = context.GetInfoVersionFromAppOutput(output);
+        AssertOutputVersionVariations(infoVersion, output);
     }
 
     [Test]
     [CancelAfter(60000)]
-    public void PackWithForcingProperties1ScriptTest()
+    public void PackTest()
     {
         using var context = CreateTestContext();
 
-        var scriptPath = context.DeployScript("ForceProperties1.csx");
-
         var returnCode = context.DotNetCli.Pack(context.TestSolutionPath, context.BuildConfiguration,
-                                                $"-p:Git2SemVer_ScriptPath={scriptPath} -fileLogger");
-        Assert.That(returnCode, Is.EqualTo(0));
+                                                "-fileLogger");
+        Assert.That(returnCode, Is.Zero);
 
         var output = DotNetProcessHelpers.RunDotnetApp(context.CompiledAppPath, context.Logger);
-        Assert.That(output, Contains.Substring("""
-                                               Assembly version:       1.2.3.0
-                                               File version:           4.5.6
-                                               Informational version:  11.12.13-a-prerelease+metadata
-                                               Product version:        11.12.13-a-prerelease+metadata
-                                               """));
-        VersioningBuildTestContext.AssertFileExists(context.PackageOutputDir, "NoeticTools.TestApplication.5.6.7.nupkg");
+        var infoVersion = context.GetInfoVersionFromAppOutput(output);
+        AssertOutputVersionVariations(infoVersion, output);
+        AssertNugetPackageExists(infoVersion, context);
+    }
+
+    protected void AssertNugetPackageExists(SemVersion infoVersion, VersioningBuildTestContext context)
+    {
+        var fileVersion = $"{infoVersion.Major}.{infoVersion.Minor}.{infoVersion.Patch}";
+        if (infoVersion.IsPrerelease)
+        {
+            fileVersion += $"-{infoVersion.Prerelease}";
+        }
+
+        VersioningBuildTestContext.AssertFileExists(context.PackageOutputDir, $"NoeticTools.TestApplication.{fileVersion}.nupkg");
+    }
+
+    protected static void AssertOutputVersionVariations(SemVersion infoVersion, string output)
+    {
+        Assert.That(output, Contains.Substring($"""
+                                                Assembly version:       {infoVersion.ToAssemblyVersion()}
+                                                File version:           {infoVersion.ToFileVersion()}
+                                                Informational version:  {infoVersion}
+                                                Product version:        {infoVersion}
+                                                """));
     }
 
     protected abstract VersioningBuildTestContext CreateTestContext();

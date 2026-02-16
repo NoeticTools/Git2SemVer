@@ -9,20 +9,13 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\Scripts\ForceProperties1.csx" />
-    <None Remove="Resources\Scripts\ForceProperties2.csx" />
-    <None Remove="Resources\Scripts\ForceProperties3.csx" />
-    <None Remove="Resources\Scripts\Git2SemVer.csx" />
-  </ItemGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\CrossTargetingTestSolution.zip" />
-    <EmbeddedResource Include="Resources\Scripts\Git2SemVer.csx" />
     <EmbeddedResource Include="Resources\StandAloneTestSolution.zip" />
-    <EmbeddedResource Include="Resources\Scripts\ForceProperties1.csx" />
-    <EmbeddedResource Include="Resources\Scripts\ForceProperties3.csx" />
-    <EmbeddedResource Include="Resources\Scripts\ForceProperties2.csx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,15 +23,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="[17.11.4]" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.14.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="NUnit" Version="4.3.2" />
-    <PackageReference Include="NUnit.Analyzers" Version="4.9.2">
+    <PackageReference Include="Microsoft.Build.Framework" Version="[17.11.48]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="NUnit" Version="4.4.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="4.11.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>

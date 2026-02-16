@@ -105,29 +105,6 @@ public interface IVersionGeneratorInputs
     /// </summary>
     string IntermediateOutputDirectory { get; }
 
-    /// <summary>
-    ///     Optional MSBuild <c>Git2SemVer_RunScript</c> property.
-    /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         If set to <c>false</c> prevents the script from being executed.
-    ///         If set to <c>true</c> ensure the script is executed and fail the build if the script is not present.
-    ///         If <c>null</c> (not set) and the script will execute if present but the build will not fail if not present.
-    ///         The default is <c>null</c>.
-    ///     </para>
-    /// </remarks>
-    bool? RunScript { get; }
-
-    /// <summary>
-    ///     Optional arguments for script use.
-    /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         MSBuild property: <c>Git2SemVer_ScriptArg</c>.
-    ///     </para>
-    /// </remarks>
-    string ScriptArgs { get; }
-
     string SolutionSharedDirectory { get; }
 
     string SolutionSharedVersioningPropsFile { get; }

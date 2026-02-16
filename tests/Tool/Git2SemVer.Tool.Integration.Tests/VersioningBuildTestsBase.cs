@@ -7,54 +7,16 @@ namespace NoeticTools.Git2SemVer.Tool.Integration.Tests;
 
 internal abstract class VersioningBuildTestsBase : SolutionTestsBase
 {
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        OneTimeSetUpBase();
-
-        //BuildGit2SemVerMSBuild();
-        //BuildGit2SemVerTool();
-
-        var testProjectBinDirectory = Path.Combine(TestSolutionDirectory, "TestApplication/bin/", BuildConfiguration);
-        CompiledAppPath = Path.Combine(testProjectBinDirectory, "net8.0", "NoeticTools.TestApplication.dll");
-        PackageOutputDir = testProjectBinDirectory;
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        SetUpBase();
-        if (Directory.Exists(PackageOutputDir))
-        {
-            Directory.Delete(PackageOutputDir, true);
-        }
-    }
-    //[Test]
-    //[CancelAfter(60000)]
-    //public void BuildAndThenPackWithoutRebuildTest()
-    //{
-    //    var scriptPath = DeployScript("ForceProperties3.csx");
-    //    DotNetCliBuildTestSolution($"-p:Git2SemVer_ScriptPath={scriptPath}");
-    //    PackTestSolution();
-    //    AssertFileExists(PackageOutputDir, "NoeticTools.TestApplication.1.2.3-alpha.nupkg");
-
-    //    var output = DotNetProcessHelpers.RunDotnetApp(CompiledAppPath, Logger);
-    //    Assert.That(output, Does.Contain("""
-    //                                     Assembly version:       200.201.202.0
-    //                                     File version:           200.201.212
-    //                                     Informational version:  2.2.2-beta
-    //                                     Product version:        2.2.2-beta
-    //                                     """));
-    //}
+    private string _compiledAppPath;
+    private string _packageOutputDir;
 
     [Test]
     [CancelAfter(60000)]
     public void BuildOnlyTest()
     {
-        var scriptPath = DeployScript("ForceProperties3.csx");
-        DotNetCliBuildTestSolution($"-p:Git2SemVer_ScriptPath={scriptPath}");
+        DotNetCliBuildTestSolution();
 
-        var output = DotNetProcessHelpers.RunDotnetApp(CompiledAppPath, Logger);
+        var output = DotNetProcessHelpers.RunDotnetApp(_compiledAppPath, Logger);
         Assert.That(output, Does.Contain("""
                                          Assembly version:       200.201.202.0
                                          File version:           200.201.212
@@ -70,52 +32,49 @@ internal abstract class VersioningBuildTestsBase : SolutionTestsBase
         var scriptPath = DeployScript("ForceProperties1.csx");
 
         var returnCode = DotNetCli.Pack(TestSolutionPath, BuildConfiguration, $"-p:Git2SemVer_ScriptPath={scriptPath} -fileLogger");
-        Assert.That(returnCode, Is.EqualTo(0));
+        Assert.That(returnCode, Is.Zero);
 
-        var output = DotNetProcessHelpers.RunDotnetApp(CompiledAppPath, Logger);
+        var output = DotNetProcessHelpers.RunDotnetApp(_compiledAppPath, Logger);
         Assert.That(output, Contains.Substring("""
                                                Assembly version:       1.2.3.0
                                                File version:           4.5.6
                                                Informational version:  11.12.13-a-prerelease+metadata
                                                Product version:        11.12.13-a-prerelease+metadata
                                                """));
-        AssertFileExists(PackageOutputDir, "NoeticTools.TestApplication.5.6.7.nupkg");
+        AssertFileExists(_packageOutputDir, "NoeticTools.TestApplication.5.6.7.nupkg");
     }
 
-    private void BuildTestSolution(string scriptName)
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
-        var scriptPath = DeployScript(scriptName);
-        DotNetCliBuildTestSolution($"-p:Git2SemVer_ScriptPath={scriptPath}");
+        OneTimeSetUpBase();
+
+        var testProjectBinDirectory = Path.Combine(TestSolutionDirectory, "TestApplication/bin/", BuildConfiguration);
+        _compiledAppPath = Path.Combine(testProjectBinDirectory, "net8.0", "NoeticTools.TestApplication.dll");
+        _packageOutputDir = testProjectBinDirectory;
     }
 
-    private void BuildTestSolutionAndRemovePackage()
+    [SetUp]
+    public void SetUp()
     {
-        DotNetCliBuildTestSolution();
-        DeleteAllNuGetPackages(PackageOutputDir);
+        SetUpBase();
+        if (Directory.Exists(_packageOutputDir))
+        {
+            Directory.Delete(_packageOutputDir, true);
+        }
     }
 
-    //private void PackTestSolution()
-    //{
-    //    var result = DotNetCli.Pack(TestSolutionPath, BuildConfiguration, "--no-restore --no-build");
-    //    TestContext.Out.WriteLine(result.stdOutput);
-    //    Assert.That(result.returnCode, Is.EqualTo(0));
-    //    Assert.That(Logger.HasError, Is.False);
-    //}
-
-    protected string CompiledAppPath;
-    protected string PackageOutputDir;
-
-    protected void DotNetCliBuildTestSolution(params string[] arguments)
-    {
-        var returnCode = DotNetCli.Build(TestSolutionPath, BuildConfiguration, arguments);
-        Assert.That(returnCode, Is.EqualTo(0));
-        Assert.That(Logger.HasError, Is.False);
-    }
-
-    protected static void AssertFileExists(string packageDirectory, string expectedFilename)
+    private static void AssertFileExists(string packageDirectory, string expectedFilename)
     {
         var directory = new DirectoryInfo(packageDirectory);
         var foundFiles = directory.GetFiles(expectedFilename);
         Assert.That(foundFiles.Length, Is.EqualTo(1), $"File '{expectedFilename}' does not exist.");
+    }
+
+    private void DotNetCliBuildTestSolution(params string[] arguments)
+    {
+        var returnCode = DotNetCli.Build(TestSolutionPath, BuildConfiguration, arguments);
+        Assert.That(returnCode, Is.Zero);
+        Assert.That(Logger.HasError, Is.False);
     }
 }

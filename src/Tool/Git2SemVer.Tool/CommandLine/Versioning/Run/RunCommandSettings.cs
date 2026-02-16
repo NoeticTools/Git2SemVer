@@ -9,7 +9,7 @@ using Spectre.Console.Cli;
 
 namespace NoeticTools.Git2SemVer.Tool.CommandLine.Versioning.Run;
 
-public class RunCommandSettings : CommonCommandSettings
+internal class RunCommandSettings : CommonCommandSettings
 {
     [CommandOption("-b|--branch-maturity-pattern <PATTERN>")]
     [DefaultValue(null)]

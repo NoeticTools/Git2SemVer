@@ -3,7 +3,7 @@
 
 namespace NoeticTools.Git2SemVer.Tool.MSBuild.Projects;
 
-public interface IProjectDocument
+internal interface IProjectDocument
 {
     PropertyGroup Properties { get; }
 
