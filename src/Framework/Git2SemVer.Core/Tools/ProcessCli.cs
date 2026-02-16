@@ -107,6 +107,7 @@ public sealed class ProcessCli : IProcessCli
             var exitCode = process.ExitCode;
             if (exitCode == 0)
             {
+                Logger.LogInfo(process.StandardOutput.ReadToEnd());
                 return exitCode;
             }
 
