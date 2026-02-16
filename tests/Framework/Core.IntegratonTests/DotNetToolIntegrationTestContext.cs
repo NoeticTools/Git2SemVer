@@ -42,5 +42,5 @@ internal sealed class DotNetToolIntegrationTestContext : IDisposable
         TestDirectoryResource.Release();
     }
 
-    private NUnitLogger Logger { get; }
+    public NUnitLogger Logger { get; }
 }

@@ -1,3 +1,5 @@
+
+
 namespace NoeticTools.Git2SemVer.Core.IntegrationTests;
 
 [TestFixture]
@@ -22,6 +24,7 @@ public class DotNetToolIntegrationTests
     public void NewNamedSolutionTest()
     {
         using var context = new DotNetToolIntegrationTestContext();
+        context.Logger.Level = Core.Logging.LoggingLevel.Trace;//>>>
 
         context.DotNetCli.Solution.New("MyName");
 
