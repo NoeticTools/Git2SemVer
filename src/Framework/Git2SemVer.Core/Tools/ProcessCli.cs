@@ -107,10 +107,10 @@ public sealed class ProcessCli : IProcessCli
             var exitCode = process.ExitCode;
             if (exitCode == 0)
             {
-                Logger.LogInfo(process.StandardOutput.ReadToEnd());
                 return exitCode;
             }
 
+            Logger.LogInfo(process.StandardOutput.ReadToEnd());
             OnError(errorOut, $"ProcessCli Run returned non-zero exit code {exitCode}.");
             return exitCode;
         }
